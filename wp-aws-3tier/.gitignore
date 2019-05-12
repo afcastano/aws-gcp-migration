@@ -1,0 +1,4 @@
+out
+.terraform
+.DS_Store
+ssh_public_key
