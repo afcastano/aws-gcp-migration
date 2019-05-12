@@ -13,6 +13,19 @@ resource "aws_alb_target_group" "targ" {
   port = 8080
   protocol = "HTTP"
   vpc_id = "${aws_vpc.app_vpc.id}"
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 5
+    path                = "/"
+    interval            = 30
+    port                = 8080
+    matcher             = "200-399"
+  }
+  stickiness {
+    type = "lb_cookie"
+    enabled = true
+  }
 }
 
 resource "aws_alb_target_group_attachment" "attach_web" {
