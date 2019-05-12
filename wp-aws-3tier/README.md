@@ -52,7 +52,7 @@ To connect to the bastion host, follow this steps:
 1. Obtain the dns name of the bastion host and the private ip of the instance you want to connect. These are printed in the console after running the terraform plan.
 2. Add the private key to the ssh-agent: `$ ssh-add -k <private_key_path>`
 3. Access the bastion host with ssh-agent forward: `ssh -A ubuntu@<bastion-host-elastic-ip>`
-4. Access any private instance such as the web servers: `ssh ubuntu@<ip of the private ec2 instance>`
+4. Access any private instance such as the web servers once you are inside the bastion host: `ssh ubuntu@<ip of the private ec2 instance>`
 
 
 **Acknowledgements**
