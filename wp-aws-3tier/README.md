@@ -1,9 +1,6 @@
 # terraform-aws-hosted-wordpress
 A terraform project to install a 3-tier Wordpress applicaiton in AWS. The only dependency required is **DOCKER**.
 
-#Provision vpc, subnets, igw, and default route-table
-#1 VPC - 3 subnets (public, web, database)
-
 The architecture is roughly like this:
 <Insert architecture diagram>
 
