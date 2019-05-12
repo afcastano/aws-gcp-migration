@@ -24,7 +24,7 @@ export AWS_SECRET_ACCESS_KEY=<YOUR KEY SECRET>
 export AWS_DEFAULT_REGION=ap-southeast-2
 ```
 
-3. Generate a key pair and take note of the public key. **Store the private key in a safe place**. This keys are going to be used to ssh into the EC2 instances. You can use keygen for this:
+3. Generate a key pair and take note of the public key. **Store the private key in a safe place**. These keys are going to be used to ssh into the EC2 instances. You can use keygen for this:
 ```
 ssh-keygen -t rsa -C "your_email@example.com"
 ```
