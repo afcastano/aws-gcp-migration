@@ -15,14 +15,12 @@ The solution architecture is roughly like this:
 
 
 ## Develop
-This demo uses _docker_ to create a _Tools_ image with all the dependencies required:
+This demo uses _Docker_ to create a _Tools_ image with all the dependencies required:
 * aws_cli
 * gcloud
 * terraform
 
-The make file on the repo will set up everything for you.
-
-The only local dependency that you need is **Docker**.
+The make file on the repo will set up everything for you, the only local dependency that you need is **Docker**.
 
 **PREPARATION**
 
