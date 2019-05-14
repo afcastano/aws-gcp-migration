@@ -1,6 +1,6 @@
 # From https://github.com/mesosphere/aws-cli
 
-FROM alpine:3.9
+FROM google/cloud-sdk:alpine
 
 # Add common packages
 RUN apk -v --update add \
@@ -24,6 +24,7 @@ RUN apk add \
 RUN apk add terraform
 
 VOLUME /root/.aws
+VOLUME /root/.gcp
 VOLUME /project
 WORKDIR /project
 CMD ["sh"]

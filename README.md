@@ -22,9 +22,12 @@ This demo uses _Docker_ to create a _Tools_ image with all the dependencies requ
 
 The make file on the repo will set up everything for you, the only local dependency that you need is **Docker**.
 
-**PREPARATION**
+### PREPARATION
+There is a bit of preparation in both AWS and GCP. Please folow these instructions carefully.
 
-1. Obtain your aws `key-id` and `key-secret` and load them in environment variables:
+**AWS**
+
+1. Obtain your aws `key-id` and `key-secret` as explained [here](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) and load them in environment variables:
 ```bash
 export AWS_ACCESS_KEY_ID=<YOUR KEY ID>
 export AWS_SECRET_ACCESS_KEY=<YOUR KEY SECRET>
@@ -35,14 +38,28 @@ export AWS_DEFAULT_REGION=ap-southeast-2
 ```bash
 ssh-keygen -t rsa -C "your_email@example.com"
 ```
-3. Update the `wp-aws-3tier/variables.tfvars` file and add the path to the public key: 
+3. Update the `aws/variables.tfvars` file and add the path to the public key: 
 ```properties
 ...
 public_key_path = <Path to your public key>
 ...
 ```
 
-**DEPLOYING WORDPRESS**
+**GCP**
+
+1. Create a GCP project and a service account with `Editor` role as explained [here.](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating_a_service_account)
+
+2. Create a key file for that service account in `json` format. **Store this file in a safe place and DON'T COMMIT IT**. Instructions [here.](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys)
+
+3. Export the location of the file to an environment variable:
+```
+export GCLOUD_KEYFILE_JSON=<FULL PATH OF YOUR FILE>
+```
+
+4. Enable the `compute` api as shown [here](https://cloud.google.com/apis/docs/enable-disable-apis). Enter `compute engine api` in the search box to find it.
+
+
+### DEPLOYING THE CODE
 
 Run `make help` for detailed instructions.
 
@@ -54,7 +71,10 @@ make apply
 ...
 make destroy
 ```
-Open the browser and navigate to the `lb_eip` url printed in the console after `make apply`
+
+These will install all resources in both GCP and AWS.
+
+Open the browser and navigate to the `lb_eip` url printed in the console after the aws terraform apply.
 
 ## Connecting to the EC2 instances
 

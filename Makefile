@@ -15,34 +15,66 @@ help: ## This help
 # Main targets
 
 init: ## Creates the tools docker image and inits terraform. (Only needed on a fresh repo)
-	@docker build -t aws-terraform ./images/aws-terraform
-	$(call dockerRun, terraform init)
+	@docker build -t demo-tools ./images/demo-tools
+	$(call awsRun, terraform init)
+	$(call gcpRun, terraform init)
 
+plan: plan-gcp plan-aws ## Creates the plan for aws and gcp
 
-run: ## Exec into the tools image. You could run aws and terraform commands from there
-	$(call dockerRun, sh)
+apply: apply-gcp apply-aws ## Applies the plan for aws and gcp
 
-plan: ## Creates the plan to install WordPress in Aws
-	$(call dockerRun, terraform plan $(VAR_FILE) $(PLAN_OUT) $(STATE))
+destroy: destroy-gcp destroy-aws ## Destroy the resources in aws and gcp
 
-apply: ## Executes the plan
-	$(call dockerRun, terraform apply $(STATE_OUT) $(PLAN))
+######################################################################
 
-destroy: ## Cleans up the created resources
-	$(call dockerRun, terraform destroy $(VAR_FILE) $(STATE))
+plan-aws: ## Creates the plan to install WordPress in Aws
+	$(call awsRun, terraform plan $(VAR_FILE) $(PLAN_OUT) $(STATE))
+
+apply-aws: ## Executes the aws plan
+	$(call awsRun, terraform apply $(STATE_OUT) $(PLAN))
+
+destroy-aws: ## Cleans up the created resources in aws
+	$(call awsRun, terraform destroy $(VAR_FILE) $(STATE) -auto-approve)
+
+plan-gcp: ## Creates the plan to set up the network in GCP
+	$(call gcpRun, terraform plan $(VAR_FILE) $(PLAN_OUT) $(STATE))	
+
+apply-gcp: ## Executes the gcp plan
+	$(call gcpRun, terraform apply $(STATE_OUT) $(PLAN))	
+
+destroy-gcp: ## Cleans up the created resources in gcp
+	$(call gcpRun, terraform destroy $(VAR_FILE) $(STATE) -auto-approve)
+
+########################################################################
+
+run-aws: ## Exec into the aws tools image. You could run aws and terraform commands from there
+	$(call awsRun, sh)
+
+run-gcp: ## Exec into the gcp tools image. You could run gcp and terraform commands from there
+	$(call awsRun, sh)
 
 .DEFAULT_GOAL := help
 
 # HELPERS
+define awsRun
+	$(call dockerRun,$(1),$(AWS_FOLDER))
+endef
+
+define gcpRun
+	$(call dockerRun,$(1),$(GCP_FOLDER))
+endef
+
 define dockerRun
-	@mkdir -p $(AWS_FOLDER)/out
+	@mkdir -p $(2)/out
 	@docker run -it -e "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" \
 			   -e "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" \
 			   -e "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" \
-			   -v $(shell pwd)/$(AWS_FOLDER):/project \
-			   aws-terraform:latest $(1)
+			   -v ${GCLOUD_KEYFILE_JSON}:/root/.gcp/terraform_sa.json \
+			   -v $(shell pwd)/$(2):/project \
+			   demo-tools:latest $(1)
 endef
 AWS_FOLDER=aws
+GCP_FOLDER=gcp
 VAR_FILE=-var-file=variables.tfvars
 STATE_FILE=out/terraform.tfstate
 STATE=-state=$(STATE_FILE)
