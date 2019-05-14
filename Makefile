@@ -42,7 +42,7 @@ define dockerRun
 			   -v $(shell pwd)/$(AWS_FOLDER):/project \
 			   aws-terraform:latest $(1)
 endef
-AWS_FOLDER=wp-aws-3tier
+AWS_FOLDER=aws
 VAR_FILE=-var-file=variables.tfvars
 STATE_FILE=out/terraform.tfstate
 STATE=-state=$(STATE_FILE)
