@@ -5,10 +5,6 @@ resource "aws_alb" "alb" {
   security_groups = ["${aws_security_group.lb-sec.id}"]
 }
 
-output "lb_eip" {
-  value = "${aws_alb.alb.dns_name}"
-}
-
 resource "aws_alb_target_group" "targ" {
   port = 8080
   protocol = "HTTP"
@@ -32,7 +28,7 @@ resource "aws_alb_target_group_attachment" "attach_web" {
   target_group_arn = "${aws_alb_target_group.targ.arn}"
   target_id = "${element(aws_instance.web-server.*.id, count.index)}"
   port = 8080
-  count = "${var.web_number}"
+  count = "${var.aws_wp_server_count}"
 }
 
 resource "aws_alb_listener" "list" {

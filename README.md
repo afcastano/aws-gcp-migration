@@ -74,7 +74,7 @@ make destroy
 
 These will install all resources in both GCP and AWS.
 
-Open the browser and navigate to the `lb_eip` url printed in the console after the aws terraform apply.
+Open the browser and navigate to the `AWS wordpress external url` printed in the console after the aws terraform apply.
 
 ## Connecting to the EC2 instances
 

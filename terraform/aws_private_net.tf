@@ -33,7 +33,7 @@ resource "aws_route_table_association" "web-subnet-routes" {
 resource "aws_subnet" "db_subnet_1" {
   vpc_id = "${aws_vpc.app_vpc.id}"
   cidr_block = "192.168.30.0/24"
-  availability_zone = "${var.availability_zone_1}"
+  availability_zone = "${var.aws_availability_zone_1}"
   tags {
     Name = "database subnet"
   }
@@ -44,7 +44,7 @@ resource "aws_subnet" "db_subnet_1" {
 resource "aws_subnet" "db_subnet_2" {
   vpc_id = "${aws_vpc.app_vpc.id}"
   cidr_block = "192.168.40.0/24"
-  availability_zone = "${var.availability_zone_2}"
+  availability_zone = "${var.aws_availability_zone_2}"
   tags {
     Name = "database subnet"
   }

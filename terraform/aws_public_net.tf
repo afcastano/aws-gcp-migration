@@ -7,7 +7,7 @@ resource "aws_subnet" "pub_subnet_1"{
       Name = "public subnet"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
-  availability_zone = "${var.availability_zone_1}"
+  availability_zone = "${var.aws_availability_zone_1}"
 }
 
 #provision public subnet 2 for LB. It requires multiple AZ
@@ -19,7 +19,7 @@ resource "aws_subnet" "pub_subnet_2"{
       Name = "public subnet"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
-  availability_zone = "${var.availability_zone_2}"
+  availability_zone = "${var.aws_availability_zone_2}"
 }
 
 # NAT Gateway configuration for web subnet

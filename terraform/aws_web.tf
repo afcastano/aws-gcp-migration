@@ -2,12 +2,12 @@
 
 #Reference to bash script which prepares xenial image
 data "template_file" "wpdeploy"{
-  template = "${file("./webconfig.cfg")}"
+  template = "${file("./aws_compute_webconfig.cfg")}"
 
   vars {
     db_ip = "${aws_db_instance.wpdb.address}"
-    db_user = "${var.db_user}"
-    db_password = "${var.db_password}"
+    db_user = "${var.aws_wp_db_user}"
+    db_password = "${var.aws_wp_db_password}"
   }
 }
 
@@ -16,39 +16,39 @@ data "template_cloudinit_config" "wpdeploy_config" {
   base64_encode = false
 
   part {
-    filename     = "webconfig.cfg"
+    filename     = "aws_compute_webconfig.cfg"
     content_type = "text/cloud-config"
     content      = "${data.template_file.wpdeploy.rendered}"
   }
 }
 
 resource "aws_key_pair" "app_keypair" {
-  public_key = "${file(var.public_key_path)}"
-  key_name = "${var.public_key_name}"
+  public_key = "${file(var.aws_public_key_path)}"
+  key_name = "${var.aws_public_key_name}"
 }
 
 resource "aws_instance" "web-server" {
-  ami = "${var.web_ami}"
+  ami = "${var.aws_ubuntu_ami}"
   # The public SG is added for SSH and ICMP
   vpc_security_group_ids = ["${aws_security_group.web-sec.id}", "${aws_security_group.allout.id}"]
-  instance_type = "${var.web_instance_type}"
+  instance_type = "${var.aws_instance_type}"
   subnet_id = "${aws_subnet.web_subnet.id}"
   key_name = "${aws_key_pair.app_keypair.key_name}"
 
   tags {
     Name = "web-server-${count.index}"
   }
-  count = "${var.web_number}"
+  count = "${var.aws_wp_server_count}"
   depends_on = ["aws_db_instance.wpdb"]
   user_data = "${data.template_cloudinit_config.wpdeploy_config.rendered}"
 }
 
 # bastion server
 resource "aws_instance" "bastion" {
-  ami = "${var.web_ami}"
+  ami = "${var.aws_ubuntu_ami}"
   # The public SG is added for SSH and ICMP
   vpc_security_group_ids = ["${aws_security_group.pub.id}", "${aws_security_group.allout.id}"]
-  instance_type = "${var.web_instance_type}"
+  instance_type = "${var.aws_instance_type}"
   key_name = "${aws_key_pair.app_keypair.key_name}"
   subnet_id = "${aws_subnet.pub_subnet_1.id}"
 
@@ -64,14 +64,6 @@ resource "aws_eip" "bastion_eip" {
 resource "aws_eip_association" "myapp_eip_assoc" {
   instance_id = "${aws_instance.bastion.id}"
   allocation_id = "${aws_eip.bastion_eip.id}"
-}
-
-output "Bastion Elastic DNS name" {
-  value = "${aws_eip.bastion_eip.public_dns}"
-}
-
-output "web-server private ips" {
-  value = "${zipmap(aws_instance.web-server.*.id, aws_instance.web-server.*.private_ip)}"
 }
 
 resource "aws_security_group" "web-sec" {
