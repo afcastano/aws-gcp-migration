@@ -3,7 +3,6 @@ aws_availability_zone_1 = "ap-southeast-1a"
 aws_availability_zone_2 = "ap-southeast-1b"
 aws_wp_db_user = "admin"
 aws_wp_db_password = "Stratoscale!Orchestration!"
-aws_public_key_path = "./aws_ssh_public_key/aws_wp_id_rsa.pub"
 
 gcp_region = "australia-southeast1"
 gcp_terraform_sa = "/root/.gcp/terraform_sa.json"

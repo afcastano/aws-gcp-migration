@@ -27,22 +27,14 @@ There is a bit of preparation in both AWS and GCP. Please folow these instructio
 
 **AWS**
 
-1. Obtain your aws `key-id` and `key-secret` as explained [here](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) and load them in environment variables:
+1. Obtain your aws `key-id` and `key-secret` as explained [here](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html)
+
+2. Load them in environment variables:
+
 ```bash
 export AWS_ACCESS_KEY_ID=<YOUR KEY ID>
 export AWS_SECRET_ACCESS_KEY=<YOUR KEY SECRET>
 export AWS_DEFAULT_REGION=ap-southeast-2
-```
-
-2. Generate a **ssh key pair** and take note of the public key. **Store the private key in a safe place and DON'T COMMIT IT**. These keys are going to be used to ssh into the EC2 instances. You can use keygen for this:
-```bash
-ssh-keygen -t rsa -C "your_email@example.com"
-```
-3. Update the `aws/variables.tfvars` file and add the path to the public key: 
-```properties
-...
-public_key_path = <Path to your public key>
-...
 ```
 
 **GCP**
@@ -52,7 +44,7 @@ public_key_path = <Path to your public key>
 2. Create a key file for that service account in `json` format. **Store this file in a safe place and DON'T COMMIT IT**. Instructions [here.](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys)
 
 3. Export the location of the file to an environment variable:
-```
+```bash
 export GCLOUD_KEYFILE_JSON=<FULL PATH OF YOUR FILE>
 ```
 
@@ -80,9 +72,8 @@ Open the browser and navigate to the `AWS wordpress external url` printed in the
 
 To connect to the bastion host, follow this steps:
 1. Obtain the dns name of the bastion host and the private ip of the instance you want to connect. These are printed in the console after running `make apply`.
-2. Add the private key to the ssh-agent: `$ ssh-add -k <private_key_path>`
-3. Access the bastion host with ssh-agent forward: `ssh -A ubuntu@<bastion-host-elastic-ip>`
-4. Access any private instance such as the web servers once you are inside the bastion host: `ssh ubuntu@<ip of the private ec2 instance>`
+2. Access the bastion host with user: `demo`: `ssh demo@<bastion-host-elastic-ip>`. Password is also `demo`
+4. Access any private instance such as the web servers once you are inside the bastion host: `ssh demo@<ip of the private ec2 instance>`
 
 
 ## Acknowledgements

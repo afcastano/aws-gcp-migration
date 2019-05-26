@@ -11,18 +11,14 @@ variable "aws_wp_server_count" {
 # Recommend use of Xenial's latest cloud image
 # located here: https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
 # Search for an ami here: https://cloud-images.ubuntu.com/locator/ec2/
-variable "aws_ubuntu_ami" {
-  type = "string"
-  default = "ami-0bab153cd7bd6fb18" # ap-southeast-1
+variable aws_disk_image {
+  description = "Boot disk for gcp_instance_type."
+  default = "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"
 }
+
 variable "aws_instance_type" {
   type = "string"
   default = "t2.medium"
-}
-variable "aws_public_key_path" {}
-variable "aws_public_key_name" {
-  type = "string"
-  default = "wp_demo"
 }
 
 # Database variables
