@@ -53,10 +53,11 @@ export GCLOUD_KEYFILE_JSON=<FULL PATH OF YOUR FILE>
 
 ### DEPLOYING THE CODE
 
-Run `make help` for detailed instructions.
+Go into the `terraform` folder and run `make help` for detailed instructions.
 
 For a fresh project run:
 ```bash
+cd terraform
 make init
 make plan
 make apply
