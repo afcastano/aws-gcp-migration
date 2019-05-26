@@ -75,9 +75,15 @@ To connect to the bastion host, follow this steps:
 2. Access the bastion host with user: `demo`: `ssh demo@<bastion-host-elastic-ip>`. Password is also `demo`
 4. Access any private instance such as the web servers once you are inside the bastion host: `ssh demo@<ip of the private ec2 instance>`
 
+## Connecting to the GCP instance
+1. Authenticate using the service account: `gcloud auth activate-service-account --key-file=$GCLOUD_KEYFILE_JSON`
+2. Run the ssh command specified in the terraform output: `gcloud compute ssh {vm name}`
 
 ## Acknowledgements
 
 Based on:
 * Video: https://www.youtube.com/watch?v=pdb9Q6V0WZo
 * Code: https://github.com/Stratoscale/strato-aws-examples/tree/master/terraform/wordpress-3tier-app
+
+GCP VPN:
+* https://cloud.google.com/solutions/automated-network-deployment-multicloud
