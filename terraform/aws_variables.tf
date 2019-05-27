@@ -18,20 +18,30 @@ variable "aws_instance_type" {
 }
 
 # Network variables #######
-# variable aws_network_cidr {
-#   description = "VPC network ip block."
-#   default = "172.16.0.0/16"
-# }
+variable aws_network_cidr {
+  description = "VPC network ip block."
+  default = "172.16.0.0/16"
+}
 
-# variable aws_subnet1_cidr {
-#   description = "Subset block from VPC network ip block."
-#   default = "172.16.0.0/24"
-# }
+variable aws_wp_subnet_cidr {
+  default = "172.16.0.0/24"
+}
 
-# variable aws_vm_address {
-#   description = "Private IP address for AWS VM instance."
-#   default = "172.16.0.100"
-# }
+variable aws_db_subnet_1_cidr {
+  default = "172.16.3.0/24"
+}
+
+variable aws_db_subnet_2_cidr {
+  default = "172.16.4.0/24"
+}
+
+variable aws_pub_subnet_1_cidr {
+  default = "172.16.5.0/24"
+}
+
+variable aws_pub_subnet_2_cidr {
+  default = "172.16.6.0/24"
+}
 
 # Database variables
 variable "aws_wp_db_password" {

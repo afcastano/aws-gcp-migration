@@ -1,7 +1,7 @@
 ### AWS VPC ####################################################################
 # provision app vpc
 resource "aws_vpc" "app_vpc" {
-  cidr_block = "192.168.0.0/16"
+  cidr_block = "${var.aws_network_cidr}"
   enable_dns_support = true
   enable_dns_hostnames = true
   tags {
@@ -40,7 +40,7 @@ resource "aws_default_route_table" "default" {
 resource "aws_subnet" "pub_subnet_1"{
   
   vpc_id = "${aws_vpc.app_vpc.id}"
-  cidr_block = "192.168.5.0/24"
+  cidr_block = "${var.aws_pub_subnet_1_cidr}"
   tags {
       Name = "public subnet"
   }
@@ -52,7 +52,7 @@ resource "aws_subnet" "pub_subnet_1"{
 resource "aws_subnet" "pub_subnet_2"{
   
   vpc_id = "${aws_vpc.app_vpc.id}"
-  cidr_block = "192.168.10.0/24"
+  cidr_block = "${var.aws_pub_subnet_2_cidr}"
   tags {
       Name = "public subnet"
   }
@@ -151,12 +151,12 @@ resource "aws_security_group" "lb-sec" {
 
 ## AWS PRIVATE NETWORKS ##############################################
 
-#provision webserver subnet
-resource "aws_subnet" "web_subnet" {
+#provision wordpress subnet
+resource "aws_subnet" "wp_subnet" {
   vpc_id = "${aws_vpc.app_vpc.id}"
-  cidr_block = "192.168.20.0/24"
+  cidr_block = "${var.aws_wp_subnet_cidr}"
   tags {
-    Name = "web server subnet"
+    Name = "WordPress subnet"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
 }
@@ -174,21 +174,17 @@ resource "aws_route_table" "nat-routes" {
     }
 }
 resource "aws_route_table_association" "web-subnet-routes" {
-    subnet_id = "${aws_subnet.web_subnet.id}"
+    subnet_id = "${aws_subnet.wp_subnet.id}"
     route_table_id = "${aws_route_table.nat-routes.id}"
 }
-
-
-
-
 
 #provision database subnet =========================================================
 resource "aws_subnet" "db_subnet_1" {
   vpc_id = "${aws_vpc.app_vpc.id}"
-  cidr_block = "192.168.30.0/24"
+  cidr_block = "${var.aws_db_subnet_1_cidr}"
   availability_zone = "${var.aws_availability_zone_1}"
   tags {
-    Name = "database subnet"
+    Name = "database subnet 1"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
 }
@@ -196,10 +192,10 @@ resource "aws_subnet" "db_subnet_1" {
 #provision database subnet
 resource "aws_subnet" "db_subnet_2" {
   vpc_id = "${aws_vpc.app_vpc.id}"
-  cidr_block = "192.168.40.0/24"
+  cidr_block = "${var.aws_db_subnet_2_cidr}"
   availability_zone = "${var.aws_availability_zone_2}"
   tags {
-    Name = "database subnet"
+    Name = "database subnet 2"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
 }
