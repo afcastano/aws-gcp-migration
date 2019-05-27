@@ -1,6 +1,5 @@
 # pass the region as a variable so we can provide it in a tfvars file
 variable "gcp_region" {}
-variable "gcp_terraform_sa" {}
 variable "gcp_projectId" {}
 
 variable gcp_instance_type {
@@ -20,4 +19,8 @@ variable gcp_subnet1_cidr {
 variable gcp_vm_address {
   description = "Private IP address for GCP VM instance."
   default = "10.240.0.100"
+}
+
+variable "gcp_terraform_sa" {
+  default = "/root/.gcp/terraform_sa.json"
 }
