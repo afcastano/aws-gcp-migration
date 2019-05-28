@@ -80,6 +80,13 @@ To connect to the bastion host, follow this steps:
 1. Authenticate using the service account: `gcloud auth activate-service-account --key-file=$GCLOUD_KEYFILE_JSON`
 2. Run the ssh command specified in the terraform output: `gcloud compute ssh {vm name}`
 
+## Testing the VPN 
+### GCP -> AWS
+1. Connecto to the GCP instance as per previous point
+2. ssh into the private ip of the wp servers. Find the ip in the output of the `make apply` command under the name: `AWS wp-server private ips`. Then do `ssh demo@<wp-private-ip>`. Password is `demo`. 
+
+Now you have connected from a GCP VM to an AWS vm using a VPN.
+
 ## Acknowledgements
 
 Based on:
