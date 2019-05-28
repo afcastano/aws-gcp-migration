@@ -42,7 +42,10 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "web-server" {
   ami = "${data.aws_ami.ubuntu.id}"
   # The public SG is added for SSH and ICMP
-  vpc_security_group_ids = ["${aws_security_group.web-sec.id}", "${aws_security_group.allout.id}"]
+  vpc_security_group_ids = [
+    "${aws_security_group.web-sec.id}",
+    "${aws_security_group.allout.id}"
+  ]
   instance_type = "${var.aws_instance_type}"
   subnet_id = "${aws_subnet.wp_subnet.id}"
 
@@ -58,7 +61,10 @@ resource "aws_instance" "web-server" {
 resource "aws_instance" "bastion" {
   ami = "${data.aws_ami.ubuntu.id}"
   # The public SG is added for SSH and ICMP
-  vpc_security_group_ids = ["${aws_security_group.pub.id}", "${aws_security_group.allout.id}"]
+  vpc_security_group_ids = [
+    "${aws_security_group.pub.id}",
+    "${aws_security_group.allout.id}"
+  ]
   instance_type = "${var.aws_instance_type}"
   subnet_id = "${aws_subnet.pub_subnet_1.id}"
 
