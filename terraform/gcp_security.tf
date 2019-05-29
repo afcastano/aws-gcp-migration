@@ -16,7 +16,7 @@ resource "google_compute_firewall" "gcp-allow-icmp" {
   ]
 }
 
-# Allow SSH for iperf testing.
+# Allow SSH 
 resource "google_compute_firewall" "gcp-allow-ssh" {
   name    = "${google_compute_network.demo-vpc.name}-gcp-allow-ssh"
   network = "${google_compute_network.demo-vpc.name}"
@@ -30,26 +30,6 @@ resource "google_compute_firewall" "gcp-allow-ssh" {
     "0.0.0.0/0"
   ]
 }
-
-# Allow traffic from the VPN subnets.
-# resource "google_compute_firewall" "gcp-allow-vpn" {
-#   name    = "${google_compute_network.gcp-network.name}-gcp-allow-vpn"
-#   network = "${google_compute_network.gcp-network.name}"
-
-#   allow {
-#     protocol = "tcp"
-#     ports = ["0-65535"]
-#   }
-
-#   allow {
-#     protocol = "udp"
-#     ports = ["0-65535"]
-#   }
-
-#   source_ranges = [
-#     "${var.aws_subnet1_cidr}"
-#   ]
-# }
 
 # Allow TCP traffic from the Internet.
 resource "google_compute_firewall" "gcp-allow-internet" {

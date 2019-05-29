@@ -1,6 +1,15 @@
-resource "google_compute_subnetwork" "demo-subnet" {
-  name                     = "demo-subnet"
-  ip_cidr_range            = "${var.gcp_subnet1_cidr}"
+resource "google_compute_subnetwork" "public-subnet" {
+  name                     = "public-subnet"
+  ip_cidr_range            = "${var.gcp_public_cidr}"
+  project                  = "${var.gcp_projectId}"
+  region                   = "${var.gcp_region}"
+  network                  = "${google_compute_network.demo-vpc.self_link}"
+  enable_flow_logs         = true
+}
+
+resource "google_compute_subnetwork" "private-subnet" {
+  name                     = "private-subnet"
+  ip_cidr_range            = "${var.gcp_private_cidr}"
   project                  = "${var.gcp_projectId}"
   region                   = "${var.gcp_region}"
   network                  = "${google_compute_network.demo-vpc.self_link}"

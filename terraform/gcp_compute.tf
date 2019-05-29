@@ -12,8 +12,8 @@ resource "google_compute_address" "gcp-ip" {
   region = "${var.gcp_region}"
 }
 
-resource "google_compute_instance" "gcp-vm" {
-  name         = "gcp-vm-${var.gcp_region}"
+resource "google_compute_instance" "gcp-bastion" {
+  name         = "gcp-bastion"
   machine_type = "${var.gcp_instance_type}"
   zone         = "${data.google_compute_zones.available.names[0]}"
 
@@ -24,17 +24,26 @@ resource "google_compute_instance" "gcp-vm" {
   }
 
   network_interface {
-    subnetwork = "${google_compute_subnetwork.demo-subnet.name}"
-    network_ip = "${var.gcp_vm_address}"
+    subnetwork = "${google_compute_subnetwork.public-subnet.name}"
 
     access_config {
       # Static IP
       nat_ip = "${google_compute_address.gcp-ip.address}"
     }
   }
+}
+resource "google_compute_instance" "gcp-private-vm" {
+  name         = "gcp-private-vm"
+  machine_type = "${var.gcp_instance_type}"
+  zone         = "${data.google_compute_zones.available.names[1]}"
 
-  # Cannot pre-load both gcp and aws since that creates a circular dependency.
-  # Can pre-populate the AWS IPs to make it easier to run tests.
-  # Thiis is for vpn
-  # metadata_startup_script = "${replace("${replace("${file("vm_userdata.sh")}", "<EXT_IP>", "${aws_eip.aws-ip.public_ip}")}", "<INT_IP>", "${var.aws_vm_address}")}"
+  boot_disk {
+    initialize_params {
+      image = "${var.gcp_disk_image}"
+    }
+  }
+
+  network_interface {
+    subnetwork = "${google_compute_subnetwork.private-subnet.name}"
+  }
 }

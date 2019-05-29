@@ -12,13 +12,11 @@ variable gcp_disk_image {
   default = "projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts"
 }
 
-variable gcp_subnet1_cidr {
+variable gcp_public_cidr {
   default = "10.240.0.0/24"
 }
-
-variable gcp_vm_address {
-  description = "Private IP address for GCP VM instance."
-  default = "10.240.0.100"
+variable gcp_private_cidr {
+  default = "10.240.2.0/24"
 }
 
 variable "gcp_terraform_sa" {
