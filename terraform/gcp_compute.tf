@@ -23,6 +23,8 @@ resource "google_compute_instance" "gcp-bastion" {
     }
   }
 
+  metadata_startup_script = "${file("gcp_cloudconfig/vm_config.sh")}"
+  
   network_interface {
     subnetwork = "${google_compute_subnetwork.public-subnet.name}"
 
@@ -42,6 +44,8 @@ resource "google_compute_instance" "gcp-private-vm" {
       image = "${var.gcp_disk_image}"
     }
   }
+
+  metadata_startup_script = "${file("gcp_cloudconfig/vm_config.sh")}"
 
   network_interface {
     subnetwork = "${google_compute_subnetwork.private-subnet.name}"
