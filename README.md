@@ -1,4 +1,6 @@
-# DEMO Terraform Wordpress in AWS with VPN to GCP
+# WORK IN PROGRESS
+
+# DEMO: Velostrata migration from Wordpress in AWS to GCP using Terraform
 
 Demo steps:
 

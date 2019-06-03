@@ -34,6 +34,39 @@ resource "google_compute_instance" "gcp-bastion" {
     }
   }
 }
+resource "google_compute_instance" "velostrata-manager" {
+  name         = "velostrata-manager"
+  machine_type = "${var.gcp_instance_type}"
+  zone         = "${data.google_compute_zones.available.names[0]}"
+
+  boot_disk {
+    initialize_params {
+      image = "projects/click-to-deploy-images/global/images/velostrata-mgmt-4-2-0-24912"
+      size  = 60
+    }
+  }
+
+  service_account {
+    email  = "velos-manager-wpdemo@aws-gcp-migration-demo.iam.gserviceaccount.com"
+    scopes = [ "https://www.googleapis.com/auth/cloud-platform", "rpc://phrixus.googleapis.com/auth/cloudrpc" ]
+  }
+
+  network_interface {
+    subnetwork = "${google_compute_subnetwork.public-subnet.name}"
+
+    access_config {
+    }
+  }
+
+  metadata = {
+    apiPassword              = "wpdemo1234"
+    secretsEncKey            = "wpdemo1234"
+    defaultServiceAccount    = "velos-cloud-extension-wpdemo@aws-gcp-migration-demo.iam.gserviceaccount.com"
+    google-monitoring-enable = "1"
+    google-logging-enable    = "1"
+  }
+}
+
 resource "google_compute_instance" "gcp-private-vm" {
   name         = "gcp-private-vm"
   machine_type = "${var.gcp_instance_type}"
