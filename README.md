@@ -1,21 +1,17 @@
-THIS IS WORK IN PROGRES
-===========================================
-
-# Migrate AWS application to GCP Demo
+# DEMO Terraform Wordpress in AWS with VPN to GCP
 
 Demo steps:
 
 1. Deploy a 3 tier WordPress application in in AWS
 2. Create a GCP project. 
 3. Set up the VPN 
-4. Migrate the EC2 instance to GCE
 
 The solution architecture is roughly like this:
 [ Insert architecture diagram ]
 
 
 ## Develop
-This demo uses _Docker_ to create a _Tools_ image with all the dependencies required:
+This demo uses _Docker_ to create an image with all the local dependencies required:
 * aws_cli
 * gcloud
 * terraform
@@ -53,7 +49,7 @@ export GCLOUD_KEYFILE_JSON=<FULL PATH OF YOUR FILE>
 
 ### DEPLOYING THE CODE
 
-Go into the `terraform` folder and run `make help` for detailed instructions.
+Clone this repo and run `make help` for detailed instructions.
 
 For a fresh project run:
 ```bash

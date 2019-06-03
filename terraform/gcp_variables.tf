@@ -19,10 +19,6 @@ variable gcp_private_cidr {
   default = "10.240.2.0/24"
 }
 
-variable gcp_velostrata_cidr {
-  default = "10.240.10.0/24"
-}
-
 variable "gcp_terraform_sa" {
   default = "/root/.gcp/terraform_sa.json"
 }

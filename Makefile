@@ -15,7 +15,7 @@ help: ## This help
 # Main targets
 
 init: ## Creates the tools docker image and inits terraform. (Only needed on a fresh repo)
-	@docker build -t demo-tools ../images/demo-tools
+	@docker build -t demo-tools ./images/demo-tools
 	$(call dockerRun,terraform init)
 
 plan: ## Creates the plan to install WordPress in Aws, set up networks in both aws and gcp
@@ -30,17 +30,18 @@ destroy: ## Cleans up the created resources in aws
 .DEFAULT_GOAL := help
 
 define dockerRun
-	@mkdir -p out
+	@mkdir -p $(OUT_DIR)
 	@docker run -it -e "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" \
 			   -e "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" \
 			   -e "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" \
 			   -v ${GCLOUD_KEYFILE_JSON}:/root/.gcp/terraform_sa.json \
-			   -v $(shell pwd):/project \
+			   -v $(shell pwd)/terraform:/project \
 			   demo-tools:latest $(1)
 endef
+OUT_DIR=./terraform/out
 VAR_FILE=-var-file=variables.tfvars
-STATE_FILE=out/terraform.tfstate
+STATE_FILE=$(OUT_DIR)/terraform.tfstate
 STATE=-state=$(STATE_FILE)
 STATE_OUT=-state-out=$(STATE_FILE)
-PLAN=out/terraform.plan
+PLAN=$(OUT_DIR)/terraform.plan
 PLAN_OUT=-out=$(PLAN)
