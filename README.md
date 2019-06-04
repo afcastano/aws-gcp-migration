@@ -1,5 +1,12 @@
 # WORK IN PROGRESS
 
+Pending:
+
+- Create gcp velostrata service accounts
+- Configure cloud extensions
+- Migrate using waves
+
+
 # DEMO: Velostrata migration from Wordpress in AWS to GCP using Terraform
 
 Demo steps:
@@ -13,12 +20,15 @@ The solution architecture is roughly like this:
 
 
 ## Develop
-This demo uses _Docker_ to create an image with all the local dependencies required:
+The only local dependency you need is **Docker**. This demo will create image with all the local dependencies required:
 * aws_cli
 * gcloud
 * terraform
 
-The make file on the repo will set up everything for you, the only local dependency that you need is **Docker**.
+The `Makefile` on the repo will set up everything for you.
+
+## Security note
+This plan uses plain text passwords and secrets intentionally to facilitate the demo. **If you plan to use this for real applications, you have to deal with secrets more securely**
 
 ### PREPARATION
 There is a bit of preparation in both AWS and GCP. Please folow these instructions carefully.
@@ -51,19 +61,19 @@ export GCLOUD_KEYFILE_JSON=<FULL PATH OF YOUR FILE>
 
 ### DEPLOYING THE CODE
 
-Clone this repo and run `make help` for detailed instructions.
+Go to the root of this repo and run `make help` for detailed instructions.
 
-For a fresh project run:
+For a fresh project, run:
+
 ```bash
-cd terraform
 make init
 make plan
 make apply
-...
-make destroy
 ```
 
-These will install all resources in both GCP and AWS.
+Don't forget to run `make destroy` after you finish the demo to delete all of the resources created and avoid unnecesary costs.
+
+The previous steps will install all resources in both GCP and AWS.
 
 Open the browser and navigate to the `AWS wordpress external url` printed in the console after the aws terraform apply.
 
