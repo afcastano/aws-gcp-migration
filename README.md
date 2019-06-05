@@ -2,7 +2,6 @@
 
 Pending:
 
-- Create gcp velostrata service accounts
 - Configure cloud extensions
 - Migrate using waves
 
@@ -28,7 +27,12 @@ The only local dependency you need is **Docker**. This demo will create image wi
 The `Makefile` on the repo will set up everything for you.
 
 ## Security note
-This plan uses plain text passwords and secrets intentionally to facilitate the demo. **If you plan to use this for real applications, you have to deal with secrets more securely**
+There are few security considerations on this project:
+- This project uses plain text passwords and secrets intentionally to facilitate the demo.
+- The IAM roles for the terraform service account are very broad.
+- The VMs have password authentication enabled for ssh. Public key authentication is preferred over password auth.
+
+**Please be sure to address this issues if you want to use this code in a real life applicaiton**
 
 ### PREPARATION
 There is a bit of preparation in both AWS and GCP. Please folow these instructions carefully.
@@ -47,7 +51,7 @@ export AWS_DEFAULT_REGION=ap-southeast-2
 
 **GCP**
 
-1. Create a GCP project and a service account with `Editor` role as explained [here.](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating_a_service_account)
+1. Create a GCP project and a service account with `Owner` role as explained [here.](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating_a_service_account).
 
 2. Create a key file for that service account in `json` format. **Store this file in a safe place and DON'T COMMIT IT**. Instructions [here.](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys)
 
@@ -56,7 +60,10 @@ export AWS_DEFAULT_REGION=ap-southeast-2
 export GCLOUD_KEYFILE_JSON=<FULL PATH OF YOUR FILE>
 ```
 
-4. Enable the `compute` api as shown [here](https://cloud.google.com/apis/docs/enable-disable-apis). Enter `compute engine api` in the search box to find it.
+4. Make sure that the folowing APIs are enabled ( Instructions [here](https://cloud.google.com/apis/docs/enable-disable-apis) ) : 
+    - `serviceusage.googleapis.com`
+    - `cloudresourcemanager.googleapis.com` 
+    - `compute.googleapis.com`
 
 
 ### DEPLOYING THE CODE

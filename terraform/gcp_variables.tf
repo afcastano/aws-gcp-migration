@@ -4,7 +4,7 @@ variable "gcp_projectId" {}
 
 variable gcp_instance_type {
   description = "Machine Type. Correlates to an network egress cap."
-  default = "n1-highmem-8"
+  default = "n1-standard-2"
 }
 
 variable gcp_disk_image {
@@ -41,4 +41,12 @@ variable GCP_TUN2_VPN_GW_ASN {
 variable GCP_TUN2_CUSTOMER_GW_INSIDE_NETWORK_CIDR {
   description = "Tunnel 2 - Customer Gateway from Inside IP Address CIDR block, from AWS VPN Customer Gateway Configuration"
   default = "30"
+}
+
+variable gcp_velostrata_api_password {
+  default = "wpdemo1234"
+}
+
+variable gcp_velostrata_enc_key {
+  default = "wpdemo1234"
 }

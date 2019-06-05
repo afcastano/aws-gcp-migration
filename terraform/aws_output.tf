@@ -10,10 +10,10 @@ output "AWS wp-server private ips" {
   value = "${zipmap(aws_instance.web-server.*.id, aws_instance.web-server.*.private_ip)}"
 }
 
-output "Velostrata key id" {
+output "AWS Velostrata key id" {
   value = "${aws_iam_access_key.velostrata-iam-key.id}"
 }
 
-output "Velostrata key secret" {
+output "AWS Velostrata key secret" {
   value = "${aws_iam_access_key.velostrata-iam-key.secret}"
 }
