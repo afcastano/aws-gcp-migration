@@ -7,9 +7,27 @@ resource "google_compute_subnetwork" "public-subnet" {
   enable_flow_logs         = true
 }
 
-resource "google_compute_subnetwork" "private-subnet" {
-  name                     = "private-subnet"
-  ip_cidr_range            = "${var.gcp_private_cidr}"
+resource "google_compute_subnetwork" "workload-subnet" {
+  name                     = "workload-subnet"
+  ip_cidr_range            = "${var.gcp_workload_cidr}"
+  project                  = "${var.gcp_projectId}"
+  region                   = "${var.gcp_region}"
+  network                  = "${google_compute_network.demo-vpc.self_link}"
+  enable_flow_logs         = true
+}
+
+resource "google_compute_subnetwork" "velostrata-subnet-1" {
+  name                     = "velostrata-subnet-1"
+  ip_cidr_range            = "${var.gcp_velostrata_1_cidr}"
+  project                  = "${var.gcp_projectId}"
+  region                   = "${var.gcp_region}"
+  network                  = "${google_compute_network.demo-vpc.self_link}"
+  enable_flow_logs         = true
+}
+
+resource "google_compute_subnetwork" "velostrata-subnet-2" {
+  name                     = "velostrata-subnet-2"
+  ip_cidr_range            = "${var.gcp_velostrata_2_cidr}"
   project                  = "${var.gcp_projectId}"
   region                   = "${var.gcp_region}"
   network                  = "${google_compute_network.demo-vpc.self_link}"

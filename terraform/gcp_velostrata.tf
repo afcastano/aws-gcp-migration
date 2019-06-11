@@ -236,6 +236,8 @@ resource "google_compute_instance" "velostrata-manager" {
     }
   }
 
+  tags = ["fw-velosmanager"]
+
   metadata = {
     apiPassword              = "${var.gcp_velostrata_api_password}"
     secretsEncKey            = "${var.gcp_velostrata_enc_key}"
