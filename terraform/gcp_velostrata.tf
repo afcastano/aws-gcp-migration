@@ -162,7 +162,21 @@ resource "google_service_account" "velos-cloud-extension" {
 }
 
 # ========================================================================================
+# Service account for velostrata workload
+resource "google_service_account" "velos-workload" {
+  account_id   = "velos-workload"
+  display_name = "velos-workload"
+}
+
+# ========================================================================================
 # Role bindings for service accounts
+
+resource "google_project_iam_member" "velos-extension-binding" {
+  project = "${var.gcp_projectId}"
+  role    = "projects/${var.gcp_projectId}/roles/${google_project_iam_custom_role.velos_ce.role_id}"
+
+  member = "serviceAccount:${google_service_account.velos-cloud-extension.email}"
+}
 
 resource "google_project_iam_member" "velos-manager-binding" {
   project = "${var.gcp_projectId}"
@@ -185,12 +199,25 @@ resource "google_project_iam_member" "serviceAccount-logging" {
   member = "serviceAccount:${google_service_account.velos-manager.email}"
 }
 
+resource "google_project_iam_member" "velos-extension-logging" {
+  project = "${var.gcp_projectId}"
+  role    = "roles/logging.logWriter"
+
+  member = "serviceAccount:${google_service_account.velos-cloud-extension.email}"
+}
 
 resource "google_project_iam_member" "serviceAccount-metrics" {
   project = "${var.gcp_projectId}"
   role    = "roles/monitoring.metricWriter"
 
   member = "serviceAccount:${google_service_account.velos-manager.email}"
+}
+
+resource "google_project_iam_member" "velos-extension-metrics" {
+  project = "${var.gcp_projectId}"
+  role    = "roles/monitoring.metricWriter"
+
+  member = "serviceAccount:${google_service_account.velos-cloud-extension.email}"
 }
 
 resource "google_project_iam_member" "serviceAccount-monitoring" {

@@ -51,6 +51,7 @@ resource "aws_instance" "web-server" {
 
   tags {
     Name = "web-server-${count.index}"
+    SELECTOR = "wp"
   }
   count = "${var.aws_wp_server_count}"
   depends_on = ["aws_db_instance.wpdb"]
@@ -94,6 +95,15 @@ resource "aws_security_group" "web-sec" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  # Internal HTTPs access from anywhere
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   #ssh from anywhere (for debugging)
   ingress {
     from_port   = 22
@@ -134,6 +144,29 @@ resource "aws_security_group" "pub" {
     from_port   = 8
     to_port     = 0
     protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Internal HTTP access from anywhere
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Internal HTTPs access from anywhere
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol = "-1"
+    from_port = 0
+    to_port = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
