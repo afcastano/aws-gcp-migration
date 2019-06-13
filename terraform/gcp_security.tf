@@ -43,7 +43,7 @@ resource "google_compute_firewall" "gcp-private-ingress-icmp-https-ssh" {
   }
 
   target_tags = [
-    "fw-workload"
+    "${var.gcp_velostrata_workload_tag}"
   ]
 
   source_tags = [
@@ -67,7 +67,7 @@ resource "google_compute_firewall" "gcp-velostrata-manager-ingress-https-grpc" {
   }
 
   target_tags = [
-    "fw-velosmanager"
+    "${var.gcp_velostrata_manager_tag}"
   ]
 
   source_ranges = [
@@ -86,11 +86,11 @@ resource "google_compute_firewall" "gcp-velos-ce-control" {
   }
 
   target_tags = [
-    "fw-velostrata"
+    "${var.gcp_velostrata_extension_tag}"
   ]
 
   source_tags = [
-    "fw-velosmanager"
+    "${var.gcp_velostrata_manager_tag}"
   ]
 }
 
@@ -105,7 +105,7 @@ resource "google_compute_firewall" "gcp-velos-ssh-from-internet" {
   }
 
   target_tags = [
-    "fw-velostrata"
+    "${var.gcp_velostrata_extension_tag}"
   ]
 
   source_ranges = [
@@ -124,7 +124,7 @@ resource "google_compute_firewall" "gcp-velos-backend-control" {
   }
 
   target_tags = [
-    "fw-velosmanager"
+    "${var.gcp_velostrata_manager_tag}"
   ]
 
   source_ranges = [
@@ -143,7 +143,7 @@ resource "google_compute_firewall" "gcp-velos-ce-backend" {
   }
 
   target_tags = [
-    "fw-velostrata"
+    "${var.gcp_velostrata_extension_tag}"
   ]
 
   source_ranges = [
@@ -162,11 +162,11 @@ resource "google_compute_firewall" "gcp-workload-ingress-rdp-ssh" {
   }
 
   target_tags = [
-    "fw-workload"
+    "${var.gcp_velostrata_workload_tag}"
   ]
 
   source_tags = [
-    "fw-velosmanager"
+    "${var.gcp_velostrata_manager_tag}"
   ]
 }
 
@@ -186,11 +186,11 @@ resource "google_compute_firewall" "gcp-velostrata-ingress-iscsi-ssh" {
   }
 
   target_tags = [
-    "fw-velostrata"
+    "${var.gcp_velostrata_extension_tag}"
   ]
 
   source_tags = [
-    "fw-workload"
+    "${var.gcp_velostrata_workload_tag}"
   ]
 }
 
@@ -204,11 +204,11 @@ resource "google_compute_firewall" "gcp-velostrata-extension-all" {
   }
 
   target_tags = [
-    "fw-velostrata"
+    "${var.gcp_velostrata_extension_tag}"
   ]
 
   source_tags = [
-    "fw-velostrata",
+    "${var.gcp_velostrata_extension_tag}",
     "bastion"
   ]
 }

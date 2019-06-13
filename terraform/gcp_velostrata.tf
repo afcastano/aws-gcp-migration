@@ -263,7 +263,7 @@ resource "google_compute_instance" "velostrata-manager" {
     }
   }
 
-  tags = ["fw-velosmanager"]
+  tags = ["${var.gcp_velostrata_manager_tag}"]
 
   metadata = {
     apiPassword              = "${var.gcp_velostrata_api_password}"

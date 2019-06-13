@@ -27,6 +27,18 @@ variable "gcp_terraform_sa" {
   default = "/root/.gcp/terraform_sa.json"
 }
 
+variable "gcp_velostrata_extension_tag" {
+  default = "fw-velostrata"
+}
+
+variable "gcp_velostrata_manager_tag" {
+  default = "fw-velosmanager"
+}
+
+variable "gcp_velostrata_workload_tag" {
+  default = "fw-workload"
+}
+
 variable GCP_TUN1_VPN_GW_ASN {
   description = "Tunnel 1 - Virtual Private Gateway ASN, from the AWS VPN Customer Gateway Configuration"
   default = "64512"
