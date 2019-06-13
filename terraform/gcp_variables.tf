@@ -19,12 +19,8 @@ variable gcp_workload_cidr {
   default = "10.240.1.0/24"
 }
 
-variable gcp_velostrata_1_cidr{
+variable gcp_velostrata_cidr {
   default = "10.240.3.0/24"
-}
-
-variable gcp_velostrata_2_cidr {
-  default = "10.240.4.0/24"
 }
 
 variable "gcp_terraform_sa" {
