@@ -171,6 +171,13 @@ resource "google_service_account" "velos-workload" {
 # ========================================================================================
 # Role bindings for service accounts
 
+resource "google_project_iam_member" "velos-workload-binding" {
+  project = "${var.gcp_projectId}"
+  role    = "roles/editor"
+
+  member = "serviceAccount:${google_service_account.velos-workload.email}"
+}
+
 resource "google_project_iam_member" "velos-extension-binding" {
   project = "${var.gcp_projectId}"
   role    = "projects/${var.gcp_projectId}/roles/${google_project_iam_custom_role.velos_ce.role_id}"

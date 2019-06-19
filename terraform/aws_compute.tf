@@ -71,6 +71,7 @@ resource "aws_instance" "bastion" {
 
   tags {
     Name = "WordPress Bastion"
+    SELECTOR = "bastion"
   }
   user_data = "${file("aws_cloudconfig/bastion_config.cfg")}"
 }
