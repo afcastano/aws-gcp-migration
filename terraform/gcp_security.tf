@@ -4,7 +4,7 @@
 
 
 # Allow PING testing and ssh to the bastion instances.
-resource "google_compute_firewall" "gcp-bastion-ingress-icmp-ssh" {
+resource "google_compute_firewall" "gcp-bastion-all" {
   name    = "${google_compute_network.demo-vpc.name}-gcp-public-ingress-icmp-ssh"
   network = "${google_compute_network.demo-vpc.name}"
 

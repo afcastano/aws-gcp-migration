@@ -7,24 +7,6 @@ resource "google_compute_subnetwork" "public-subnet" {
   enable_flow_logs         = true
 }
 
-resource "google_compute_subnetwork" "workload-subnet" {
-  name                     = "workload-subnet"
-  ip_cidr_range            = "${var.gcp_workload_cidr}"
-  project                  = "${var.gcp_projectId}"
-  region                   = "${var.gcp_region}"
-  network                  = "${google_compute_network.demo-vpc.self_link}"
-  enable_flow_logs         = true
-}
-
-resource "google_compute_subnetwork" "velostrata-subnet" {
-  name                     = "velostrata-subnet"
-  ip_cidr_range            = "${var.gcp_velostrata_cidr}"
-  project                  = "${var.gcp_projectId}"
-  region                   = "${var.gcp_region}"
-  network                  = "${google_compute_network.demo-vpc.self_link}"
-  enable_flow_logs         = true
-}
-
 resource "google_compute_network" "demo-vpc" {
   name                    = "demo-vpc"
   auto_create_subnetworks = false
@@ -68,7 +50,6 @@ resource "google_compute_forwarding_rule" "fr_udp4500" {
   ip_address  = "${google_compute_address.gcp-vpn-ip.address}"
   target      = "${google_compute_vpn_gateway.gcp-vpn-gw.self_link}"
 }
-
 /*
  * ----------VPN Tunnel1----------
  */
@@ -88,7 +69,7 @@ resource "google_compute_vpn_tunnel" "gcp-tunnel1" {
     "google_compute_forwarding_rule.fr_udp500",
     "google_compute_forwarding_rule.fr_udp4500",
   ]
-}
+  }
 
 resource "google_compute_router" "gcp-router1" {
   name = "gcp-router1"
@@ -130,7 +111,7 @@ resource "google_compute_vpn_tunnel" "gcp-tunnel2" {
 
   router = "${google_compute_router.gcp-router2.name}"
 
-  depends_on = [
+    depends_on = [
     "google_compute_forwarding_rule.fr_esp",
     "google_compute_forwarding_rule.fr_udp500",
     "google_compute_forwarding_rule.fr_udp4500",

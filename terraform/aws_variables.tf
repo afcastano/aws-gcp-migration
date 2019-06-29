@@ -23,34 +23,8 @@ variable aws_network_cidr {
   default = "172.16.0.0/16"
 }
 
-variable aws_wp_subnet_cidr {
-  default = "172.16.0.0/24"
-}
-
-variable aws_db_subnet_1_cidr {
-  default = "172.16.3.0/24"
-}
-
-variable aws_db_subnet_2_cidr {
-  default = "172.16.4.0/24"
-}
-
 variable aws_pub_subnet_1_cidr {
   default = "172.16.5.0/24"
-}
-
-variable aws_pub_subnet_2_cidr {
-  default = "172.16.6.0/24"
-}
-
-# Database variables
-variable "aws_wp_db_password" {
-  type = "string"
-  default = "Stratoscale!Orchestration!"
-}
-variable "aws_wp_db_user" {
-  type = "string"
-  default = "admin"
 }
 
 # pass the region as a variable so we can provide it in a tfvars file

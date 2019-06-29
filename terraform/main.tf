@@ -3,6 +3,9 @@ provider "aws" {
   region  = "${var.aws_region}"
 }
 
+provider "tls" {
+}
+
 provider "google" {
   credentials = "${file("${var.gcp_terraform_sa}")}"
   region      = "${var.gcp_region}"

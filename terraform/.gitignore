@@ -1,3 +1,4 @@
 out
 .terraform
 .DS_Store
+*.pem

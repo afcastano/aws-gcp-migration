@@ -30,7 +30,7 @@ destroy: ## Cleans up the created resources in aws
 .DEFAULT_GOAL := help
 
 define dockerRun
-	@mkdir -p $(OUT_DIR)
+	@mkdir -p terraform/$(OUT_DIR)
 	@docker run -it -e "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" \
 			   -e "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" \
 			   -e "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" \
@@ -38,7 +38,7 @@ define dockerRun
 			   -v $(shell pwd)/terraform:/project \
 			   demo-tools:latest $(1)
 endef
-OUT_DIR=./terraform/out
+OUT_DIR=./out
 VAR_FILE=-var-file=variables.tfvars
 STATE_FILE=$(OUT_DIR)/terraform.tfstate
 STATE=-state=$(STATE_FILE)
