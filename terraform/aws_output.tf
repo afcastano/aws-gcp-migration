@@ -1,5 +1,13 @@
-output "AWS Bastion Elastic DNS name" {
-  value = "${aws_eip.bastion_eip.public_dns}"
+output "AWS Bastion public ip" {
+  value = "${aws_eip.bastion_eip.public_ip}"
+}
+
+output "Wordpress url" {
+  value = "http://wp-demo:8080"
+}
+
+output "AWS update local host file" {
+  value = "sudo make aws_update_host wpip=${aws_eip.bastion_eip.public_ip}"
 }
 
 output "AWS DB Elastic DNS name" {

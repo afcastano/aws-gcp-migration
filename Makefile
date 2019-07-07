@@ -25,7 +25,23 @@ apply: ## Executes the aws plan
 	$(call dockerRun, terraform apply $(STATE_OUT) $(PLAN))
 
 destroy: ## Cleans up the created resources in aws
+	@echo "Destroying new gce instances"
+	@echo "#!/bin/bash" > $(DELETE_FILE)
+	@echo "gcloud auth activate-service-account --key-file /root/.gcp/terraform_sa.json" >> $(DELETE_FILE)
+	@echo "gcloud config set project $(GCP_PROJECT)" >> $(DELETE_FILE)
+	@echo "gcloud compute instances list | awk '{printf \"gcloud compute instances delete %s --zone %s -q\\\n\", \$$1, \$$2}'" >> $(DELETE_FILE)
+	@echo "gcloud compute instances list | awk '{printf \"gcloud compute instances delete %s --zone %s -q\\\n\", \$$1, \$$2}' | bash" >> $(DELETE_FILE)
+	@chmod 777 $(DELETE_FILE)
+	$(call dockerRun, out/delete_instances.sh)
+	@echo "Terraform destroy"
 	$(call dockerRun, terraform destroy $(VAR_FILE) $(STATE) -auto-approve)
+
+exec: ## Execs into the builder image to run custom commands
+	$(call dockerRun, bash)
+
+aws_update_host: ## Updates local etc/hosts with WP ip. Requires wpip env variable to be set.
+	@grep -q 'wp-demo' /etc/hosts && sed -i '' 's/.* wp-demo/$(wpip)    wp-demo/g' /etc/hosts || echo '$(wpip)    wp-demo' >> /etc/hosts
+		
 
 .DEFAULT_GOAL := help
 
@@ -38,6 +54,8 @@ define dockerRun
 			   -v $(shell pwd)/terraform:/project \
 			   demo-tools:latest $(1)
 endef
+DELETE_FILE=terraform/out/delete_instances.sh
+GCP_PROJECT := $(shell cat terraform/variables.tfvars | grep gcp_projectId | cut -d "=" -f2 | sed "s/\"//g")
 OUT_DIR=./out
 VAR_FILE=-var-file=variables.tfvars
 STATE_FILE=$(OUT_DIR)/terraform.tfstate

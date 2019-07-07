@@ -70,15 +70,27 @@ resource "aws_eip_association" "db_eip_assoc" {
   allocation_id = "${aws_eip.db_eip.id}"
     provisioner "remote-exec" {
     inline = [
+      "echo '############################## Installing velostrata...'",
       "wget -O 'velostrata-prep_4.2.0.deb' 'https://storage.googleapis.com/velostrata-release/V4.2.0/Latest/velostrata-prep_4.2.0.deb'",
       "sudo dpkg -i velostrata-prep_4.2.0.deb",
       "sudo apt-get install -f -y",
       "sudo dpkg -i velostrata-prep_4.2.0.deb",
+      "echo '############################## Installing mysql...'",
       "sudo apt-get update",
       "echo 'mysql-server mysql-server/root_password password passw' | sudo debconf-set-selections",
       "echo 'mysql-server mysql-server/root_password_again password passw' | sudo debconf-set-selections",
       "sudo apt-get -y install mysql-server",
-      "mysql -uroot -ppassw -e 'GRANT ALL ON *.* TO \"wpdemo\"@\"localhost\" IDENTIFIED BY \"wpdemo\";'",
+      "echo '############################## Creating mysql user...'",
+      "mysql -uroot -ppassw -e 'GRANT ALL ON *.* TO \"wpdemo\"@\"%\" IDENTIFIED BY \"wpdemo\";'",
+      "echo '############################## Allow remote connections...'",
+      "sudo sh -c \"echo '[mysqld]' >> /etc/mysql/my.cnf\"",
+      "sudo sh -c \"echo 'bind-address = 0.0.0.0' >> /etc/mysql/my.cnf\"",
+      "sudo sh -c \"echo '[client]' >> /etc/mysql/my.cnf\"",
+      "sudo sh -c \"echo 'port = 3306' >> /etc/mysql/my.cnf\"",
+      "sudo cat /etc/mysql/my.cnf",
+      "echo '############################## Restarting service'",
+      "sudo service mysql restart",
+      "echo '############################## Done'",
       "sleep 20"
     ]
   }
@@ -102,10 +114,19 @@ resource "aws_eip_association" "bastion_eip_assoc" {
   allocation_id = "${aws_eip.bastion_eip.id}"
   provisioner "remote-exec" {
     inline = [
+      "echo '############################## installing velostrata...'",
       "wget -O 'velostrata-prep_4.2.0.deb' 'https://storage.googleapis.com/velostrata-release/V4.2.0/Latest/velostrata-prep_4.2.0.deb'",
       "sudo dpkg -i velostrata-prep_4.2.0.deb",
       "sudo apt-get install -f -y",
       "sudo dpkg -i velostrata-prep_4.2.0.deb",
+      "echo '############################## installing docker...'",
+      "sudo apt-get update",
+      "sudo apt-get -y install docker.io",
+      "echo '############################## installing wp...'",
+      "sudo docker pull wordpress",
+      "echo '############################## running wp...'",
+      "sudo docker run --restart always --name wpsite -e WORDPRESS_DB_HOST=${aws_instance.db.private_ip}:3306 -e WORDPRESS_DB_USER=wpdemo -e WORDPRESS_DB_PASSWORD=wpdemo -p 8080:80 -d wordpress",
+      "echo '############################## Done'",
       "sleep 20"
     ]
   }
@@ -117,6 +138,7 @@ resource "aws_eip_association" "bastion_eip_assoc" {
     user        = "ubuntu"
     timeout     = "30s"
   }
+  depends_on = ["aws_eip_association.db_eip_assoc"]
 }
 
 #public access sg 
