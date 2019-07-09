@@ -1,4 +1,3 @@
-#Deploy Wordpress instances
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -13,20 +12,6 @@ data "aws_ami" "ubuntu" {
   }
 
   owners = ["099720109477"] # Canonical
-}
-
-data "template_file" "datafile" {
-  template = "${file("${path.cwd}/aws_cloudconfig/vm_config.sh")}"
-}
-
-resource "tls_private_key" "demo_private_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "demo_keys" {
-  key_name   = "wp_key"
-  public_key = "${tls_private_key.demo_private_key.public_key_openssh}"
 }
 
 # bastion server

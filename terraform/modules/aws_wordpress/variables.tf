@@ -1,8 +1,3 @@
-variable "aws_wp_server_count" {
-  type = "string"
-  default = "2"
-}
-
 # Use Public Xenial cloud image ami
 # Recommend use of Xenial's latest cloud image
 # located here: https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
@@ -27,10 +22,4 @@ variable aws_pub_subnet_1_cidr {
   default = "172.16.5.0/24"
 }
 
-# pass the region as a variable so we can provide it in a tfvars file
-variable "aws_region" {
-  type = "string"
-}
-
-variable "aws_availability_zone_1" {}
-variable "aws_availability_zone_2" {}
+variable "availability_zone" {}

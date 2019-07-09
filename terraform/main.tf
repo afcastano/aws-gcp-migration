@@ -11,3 +11,9 @@ provider "google" {
   region      = "${var.gcp_region}"
   project     = "${var.gcp_projectId}"
 }
+
+module "aws_wordpress" {
+    source = "./modules/aws_wordpress"
+
+    availability_zone = "${var.aws_availability_zone}"
+}

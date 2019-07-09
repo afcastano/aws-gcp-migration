@@ -34,10 +34,10 @@ resource "aws_default_route_table" "default" {
        gateway_id = "${aws_internet_gateway.app_igw.id}"
    }
 
-    # Attach the propagated routes from the vpn to this route table.
-    propagating_vgws = [
-      "${aws_vpn_gateway.aws-vpn-gw.id}"
-    ]
+    # # Attach the propagated routes from the vpn to this route table.
+    # propagating_vgws = [
+    #   "${aws_vpn_gateway.aws-vpn-gw.id}"
+    # ]
 }
 
 # AWS PUBLIC SUBNET ########################################################
@@ -50,7 +50,7 @@ resource "aws_subnet" "pub_subnet_1"{
       Name = "public subnet"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
-  availability_zone = "${var.aws_availability_zone_1}"
+  availability_zone = "${var.availability_zone}"
 }
 
 # NAT Gateway configuration for web subnet
@@ -85,38 +85,3 @@ resource "aws_subnet" "pub_subnet_1"{
 #     subnet_id = "${aws_subnet.wp_subnet.id}"
 #     route_table_id = "${aws_route_table.nat-routes.id}"
 # }
-
-## VPN CONNECTION ##############################################
-resource "aws_vpn_gateway" "aws-vpn-gw" {
-  vpc_id = "${aws_vpc.app_vpc.id}"
-}
-
-resource "aws_customer_gateway" "aws-cgw" {
-  bgp_asn    = 65000
-  ip_address = "${google_compute_address.gcp-vpn-ip.address}"
-  type       = "ipsec.1"
-  tags {
-    "Name" = "aws-customer-gw"
-  }
-}
-
-resource "aws_default_route_table" "aws-vpc" {
-  default_route_table_id = "${aws_vpc.app_vpc.default_route_table_id}"
-  route {
-    cidr_block  = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.app_igw.id}"
-  }
-  propagating_vgws = [
-    "${aws_vpn_gateway.aws-vpn-gw.id}"
-  ]
-}
-
-resource "aws_vpn_connection" "aws-vpn-connection1" {
-  vpn_gateway_id      = "${aws_vpn_gateway.aws-vpn-gw.id}"
-  customer_gateway_id = "${aws_customer_gateway.aws-cgw.id}"
-  type                = "ipsec.1"
-  static_routes_only  = false
-  tags {
-    "Name" = "aws-vpn-connection1"
-  }
-}
