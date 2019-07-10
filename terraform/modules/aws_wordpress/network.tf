@@ -34,10 +34,8 @@ resource "aws_default_route_table" "default" {
        gateway_id = "${aws_internet_gateway.app_igw.id}"
    }
 
-    # # Attach the propagated routes from the vpn to this route table.
-    # propagating_vgws = [
-    #   "${aws_vpn_gateway.aws-vpn-gw.id}"
-    # ]
+    # Attach the propagated routes from the vpn to this route table.
+    propagating_vgws = "${var.propagating_gateway_ids}"
 }
 
 # AWS PUBLIC SUBNET ########################################################

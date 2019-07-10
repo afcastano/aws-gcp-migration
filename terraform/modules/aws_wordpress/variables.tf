@@ -22,4 +22,9 @@ variable aws_pub_subnet_1_cidr {
   default = "172.16.5.0/24"
 }
 
+variable propagating_gateway_ids {
+  type = "list"
+  default = []
+}
+
 variable "availability_zone" {}

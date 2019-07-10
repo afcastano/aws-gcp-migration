@@ -264,7 +264,7 @@ resource "google_compute_instance" "velostrata-manager" {
   }
 
   network_interface {
-    subnetwork = "${google_compute_subnetwork.public-subnet.name}"
+    subnetwork = "${module.gcp_target.public_subnet_name}"
 
     access_config {
     }
@@ -281,4 +281,62 @@ resource "google_compute_instance" "velostrata-manager" {
   }
 }
 
+# Velostrata firewall rules
+# Ref: https://cloud.google.com/velostrata/docs/concepts/planning-a-migration/network-access-requirements
+
+
+# Allow access from internet to velostrata manager.
+resource "google_compute_firewall" "gcp-velostrata-manager-ingress-https-grpc" {
+  name    = "${module.gcp_target.vpc_name}-gcp-velostrata-manager-ingress-https-grpc"
+  network = "${module.gcp_target.vpc_name}"
+
+
+  allow {
+    protocol = "all"
+  }
+
+  target_tags = [
+    "${var.gcp_velostrata_manager_tag}"
+  ]
+
+  source_ranges = [
+    "0.0.0.0/0"
+  ]
+}
+
+resource "google_compute_firewall" "gcp-velos-ce-control" {
+  name    = "${module.gcp_target.vpc_name}-gcp-velos-ce-control"
+  network = "${module.gcp_target.vpc_name}"
+
+
+  allow {
+    protocol = "all"
+  }
+
+  target_tags = [
+    "${var.gcp_velostrata_extension_tag}"
+  ]
+
+  source_ranges = [
+    "0.0.0.0/0"
+  ]
+}
+
+# Allow access to workload instances from public internet.
+resource "google_compute_firewall" "gcp-workload-ingress-ssh-public" {
+  name    = "${module.gcp_target.vpc_name}-gcp-workload-ingress-ssh-public"
+  network = "${module.gcp_target.vpc_name}"
+
+  allow {
+    protocol = "all"
+  }
+
+  target_tags = [
+    "${var.gcp_velostrata_workload_tag}"
+  ]
+
+  source_ranges = [
+    "0.0.0.0/0"
+  ]
+}
 

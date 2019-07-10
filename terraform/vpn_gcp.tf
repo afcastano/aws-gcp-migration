@@ -1,20 +1,3 @@
-resource "google_compute_subnetwork" "public-subnet" {
-  name                     = "public-subnet"
-  ip_cidr_range            = "${var.gcp_public_cidr}"
-  project                  = "${var.gcp_projectId}"
-  region                   = "${var.gcp_region}"
-  network                  = "${google_compute_network.demo-vpc.self_link}"
-  enable_flow_logs         = true
-}
-
-resource "google_compute_network" "demo-vpc" {
-  name                    = "demo-vpc"
-  auto_create_subnetworks = false
-  routing_mode            = "GLOBAL"
-  project                 = "${var.gcp_projectId}"
-}
-
-
 ##### VPN CONNECTION ###################################################
 
 resource "google_compute_address" "gcp-vpn-ip" {
@@ -24,7 +7,7 @@ resource "google_compute_address" "gcp-vpn-ip" {
 
 resource "google_compute_vpn_gateway" "gcp-vpn-gw" {
   name    = "gcp-vpn-gw-${var.gcp_region}"
-  network = "${google_compute_network.demo-vpc.name}"
+  network = "${module.gcp_target.vpc_name}"
   region  = "${var.gcp_region}"
 }
 
@@ -74,7 +57,7 @@ resource "google_compute_vpn_tunnel" "gcp-tunnel1" {
 resource "google_compute_router" "gcp-router1" {
   name = "gcp-router1"
   region = "${var.gcp_region}"
-  network = "${google_compute_network.demo-vpc.name}"
+  network = "${module.gcp_target.vpc_name}"
   bgp {
     asn = "${aws_customer_gateway.aws-cgw.bgp_asn}"
   }
@@ -121,7 +104,7 @@ resource "google_compute_vpn_tunnel" "gcp-tunnel2" {
 resource "google_compute_router" "gcp-router2" {
   name = "gcp-router2"
   region = "${var.gcp_region}"
-  network = "${google_compute_network.demo-vpc.name}"
+  network = "${module.gcp_target.vpc_name}"
   bgp {
     asn = "${aws_customer_gateway.aws-cgw.bgp_asn}"
   }
