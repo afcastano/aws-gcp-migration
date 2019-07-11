@@ -25,19 +25,6 @@ resource "aws_vpc_dhcp_options_association" "dns_resolver" {
   dhcp_options_id = "${aws_vpc_dhcp_options.dns_resolver.id}"
 }
 
-#default route table 
-resource "aws_default_route_table" "default" {
-   default_route_table_id = "${aws_vpc.app_vpc.default_route_table_id}"
-
-   route {
-       cidr_block = "0.0.0.0/0"
-       gateway_id = "${aws_internet_gateway.app_igw.id}"
-   }
-
-    # Attach the propagated routes from the vpn to this route table.
-    propagating_vgws = "${var.propagating_gateway_ids}"
-}
-
 # AWS PUBLIC SUBNET ########################################################
 #provision public subnet 1
 resource "aws_subnet" "pub_subnet_1"{

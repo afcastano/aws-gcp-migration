@@ -1,6 +1,6 @@
-## VPN CONNECTION ##############################################
+## AWS VPN CONNECTION ##############################################
 resource "aws_vpn_gateway" "aws-vpn-gw" {
-  vpc_id = "${module.aws_wordpress.vpc_id}"
+  vpc_id = "${var.aws_vpc_id}"
 }
 
 resource "aws_customer_gateway" "aws-cgw" {
@@ -13,10 +13,10 @@ resource "aws_customer_gateway" "aws-cgw" {
 }
 
 resource "aws_default_route_table" "aws-vpc" {
-  default_route_table_id = "${module.aws_wordpress.route_table_id}"
+  default_route_table_id = "${var.aws_route_table_id}"
   route {
     cidr_block  = "0.0.0.0/0"
-    gateway_id = "${module.aws_wordpress.igw_id}"
+    gateway_id = "${var.aws_igw_id}"
   }
   propagating_vgws = [
     "${aws_vpn_gateway.aws-vpn-gw.id}"
