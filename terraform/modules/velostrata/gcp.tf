@@ -249,7 +249,7 @@ resource "google_project_iam_member" "serviceAccount-token-creator" {
 resource "google_compute_instance" "velostrata-manager" {
   name         = "velostrata-manager"
   machine_type = "${var.gcp_instance_type}"
-  zone         = "${data.google_compute_zones.available.names[0]}"
+  zone         = "${var.gcp_zone}"
 
   boot_disk {
     initialize_params {
@@ -264,7 +264,7 @@ resource "google_compute_instance" "velostrata-manager" {
   }
 
   network_interface {
-    subnetwork = "${module.gcp_target.public_subnet_name}"
+    subnetwork = "${var.gcp_velos_manager_subnet}"
 
     access_config {
     }
@@ -287,8 +287,8 @@ resource "google_compute_instance" "velostrata-manager" {
 
 # Allow access from internet to velostrata manager.
 resource "google_compute_firewall" "gcp-velostrata-manager-ingress-https-grpc" {
-  name    = "${module.gcp_target.vpc_name}-gcp-velostrata-manager-ingress-https-grpc"
-  network = "${module.gcp_target.vpc_name}"
+  name    = "${var.gcp_vpc_name}-gcp-velostrata-manager-ingress-https-grpc"
+  network = "${var.gcp_vpc_name}"
 
 
   allow {
@@ -305,8 +305,8 @@ resource "google_compute_firewall" "gcp-velostrata-manager-ingress-https-grpc" {
 }
 
 resource "google_compute_firewall" "gcp-velos-ce-control" {
-  name    = "${module.gcp_target.vpc_name}-gcp-velos-ce-control"
-  network = "${module.gcp_target.vpc_name}"
+  name    = "${var.gcp_vpc_name}-gcp-velos-ce-control"
+  network = "${var.gcp_vpc_name}"
 
 
   allow {
@@ -324,8 +324,8 @@ resource "google_compute_firewall" "gcp-velos-ce-control" {
 
 # Allow access to workload instances from public internet.
 resource "google_compute_firewall" "gcp-workload-ingress-ssh-public" {
-  name    = "${module.gcp_target.vpc_name}-gcp-workload-ingress-ssh-public"
-  network = "${module.gcp_target.vpc_name}"
+  name    = "${var.gcp_vpc_name}-gcp-workload-ingress-ssh-public"
+  network = "${var.gcp_vpc_name}"
 
   allow {
     protocol = "all"

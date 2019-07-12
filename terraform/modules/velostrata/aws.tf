@@ -4,11 +4,11 @@ resource "aws_cloudformation_stack" "velostrata-iam-group" {
     capabilities = ["CAPABILITY_IAM"]
     
     parameters = {
-        VPC = "${module.aws_wordpress.vpc_id}"
+        VPC = "${var.aws_vpc_id}"
     }
 
     template_body = <<STACK
-    ${file("aws_cloudconfig/velostrata_cloudformation.json")}
+    ${file("./modules/velostrata/velostrata_cloudformation.json")}
     STACK
 }
 
