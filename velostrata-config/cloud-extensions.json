@@ -1,0 +1,17 @@
+{
+    "_type": "CreateGcpCloudExtensionRequest",
+    "ceSize": "Small",
+    "name": "ce",
+    "workloadDefaultSubnetId": "https://www.googleapis.com/compute/v1/projects/aws-gcp-migration-demo/regions/australia-southeast1/subnetworks/public-subnet",
+    "licenseType": "VelostrataIssued",
+    "primaryFrontendZone": "australia-southeast1-a",
+    "secondaryFrontendZone": "australia-southeast1-b",
+    "primaryFrontendSubnetId": "https://www.googleapis.com/compute/v1/projects/aws-gcp-migration-demo/regions/australia-southeast1/subnetworks/public-subnet",
+    "secondaryFrontendSubnetId": "https://www.googleapis.com/compute/v1/projects/aws-gcp-migration-demo/regions/australia-southeast1/subnetworks/public-subnet",
+    "infraProjectId": "aws-gcp-migration-demo",
+    "defaultInstanceServiceAccountId": "velos-workload@aws-gcp-migration-demo.iam.gserviceaccount.com",
+    "cloudEdgeServiceAccountId": "velos-cloud-extension@aws-gcp-migration-demo.iam.gserviceaccount.com",
+    "infraNetworkTags": ["fw-velostrata"],
+    "workloadDefaultNetworkTags": ["fw-workload"],
+    "defaultInstanceProjectId": "aws-gcp-migration-demo"
+}
