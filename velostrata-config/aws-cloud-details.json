@@ -1,0 +1,16 @@
+{
+    "credentialsId": {
+      "_type": "CredentialsId",
+      "value": "aws2"
+    },
+    "name": "Aws2",
+    "_type": "AwsCloudDetails",
+    "availabilityZoneToSubnet": {
+      "_type": "StringToObjectMap",
+      "ap-southeast-1a": "subnet-0a17cf28e637717a4"
+    },
+    "region": "ap-southeast-1",
+    "securityGroupIds": [
+      "sg-0c5b10598fa0ee56c"
+    ]
+  }
