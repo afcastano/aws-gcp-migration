@@ -29,8 +29,7 @@ destroy: ## Cleans up the created resources in aws
 	@echo "#!/bin/bash" > $(DELETE_FILE)
 	@echo "gcloud auth activate-service-account --key-file /root/.gcp/terraform_sa.json" >> $(DELETE_FILE)
 	@echo "gcloud config set project $(GCP_PROJECT)" >> $(DELETE_FILE)
-	@echo "gcloud compute instances list | awk '{printf \"gcloud compute instances delete %s --zone %s -q\\\n\", \$$1, \$$2}'" >> $(DELETE_FILE)
-	@echo "gcloud compute instances list | awk '{printf \"gcloud compute instances delete %s --zone %s -q\\\n\", \$$1, \$$2}' | bash" >> $(DELETE_FILE)
+	@echo "gcloud compute instances list | grep 'velostrata-edge\\|wordpress' | awk '{printf \"gcloud compute instances delete %s --zone %s -q\\\n\", \$$1, \$$2}' | bash" >> $(DELETE_FILE)
 	@chmod 777 $(DELETE_FILE)
 	$(call dockerRun, out/delete_instances.sh)
 	@echo "Terraform destroy"
