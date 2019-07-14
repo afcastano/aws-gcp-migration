@@ -32,7 +32,6 @@ destroy: ## Cleans up the created resources in aws
 	@echo "echo Deleting velostrata instances..." >> $(DELETE_FILE)
 	@echo "gcloud compute instances list | grep 'velostrata-edge\\|wordpress' | awk '{printf \"gcloud compute instances delete %s --zone %s -q\\\n\", \$$1, \$$2}' | bash" >> $(DELETE_FILE)
 	@echo "echo Deleting addresses ..." >> $(DELETE_FILE)
-	@echo "gcloud compute addresses list | grep 'velostrata-edge\\|wordpress' | awk '{printf \"gcloud compute addresses delete %s --region %s -q\\\n\", \$$1, \$$5}'" >> $(DELETE_FILE)
 	@echo "gcloud compute addresses list | grep 'velostrata-edge\\|wordpress' | awk '{printf \"gcloud compute addresses delete %s --region %s -q\\\n\", \$$1, \$$5}' | bash" >> $(DELETE_FILE)
 	@chmod 777 $(DELETE_FILE)
 	$(call dockerRun, out/delete_instances.sh)

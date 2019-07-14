@@ -1,9 +1,9 @@
 {
     "credentialsId": {
       "_type": "CredentialsId",
-      "value": "aws2"
+      "value": "aws"
     },
-    "name": "Aws2",
+    "name": "aws",
     "_type": "AwsCloudDetails",
     "availabilityZoneToSubnet": {
       "_type": "StringToObjectMap",
