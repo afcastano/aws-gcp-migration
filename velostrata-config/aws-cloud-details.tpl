@@ -7,10 +7,10 @@
     "_type": "AwsCloudDetails",
     "availabilityZoneToSubnet": {
       "_type": "StringToObjectMap",
-      "ap-southeast-1a": "subnet-08603742dd4df5d36"
+      "${aws_availability_zone}": "${aws_subnet}"
     },
-    "region": "ap-southeast-1",
+    "region": "${aws_region}",
     "securityGroupIds": [
-      "sg-079649239c62213fb"
+      "${security_group}"
     ]
   }

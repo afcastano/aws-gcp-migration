@@ -23,6 +23,8 @@ plan: ## Creates the plan to install WordPress in Aws, set up networks in both a
 
 apply: ## Executes the aws plan
 	$(call dockerRun, terraform apply $(STATE_OUT) $(PLAN))
+	@mkdir -p velostrata-config/out
+	@cp terraform/out/velostrata.env velostrata-config/out/velostrata.env
 
 destroy: ## Cleans up the created resources in aws
 	@echo "Destroying new gce instances"

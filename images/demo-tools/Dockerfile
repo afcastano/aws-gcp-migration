@@ -20,6 +20,11 @@ RUN apk add \
     apk -v --purge del py-pip && \
     rm /var/cache/apk/*
 
+# Add gettext
+RUN apk add \
+        gettext \
+        libintl
+
 # Add Hashicorp terraform    
 RUN apk add terraform
 

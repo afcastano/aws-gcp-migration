@@ -9,3 +9,7 @@ output "bastion_ip" {
 output "public_subnet_name" {
     value = "${google_compute_subnetwork.public-subnet.name}"
 }
+
+output "public_subnet_id" {
+    value = "${google_compute_subnetwork.public-subnet.self_link}"
+}
