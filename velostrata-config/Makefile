@@ -53,8 +53,10 @@ runbook:
 	@mkdir -p out
 	@awk -F, -v OFS=, 'NR==2{$$1="1"; $$15="n1-standard-4"; $$20="true"}{print}' Velostrata_Runbook.csv > out/runbook.csv
 	@rm Velostrata_Runbook.csv
-	# curl http://myservice --upload-file file.txt
-	@curl -k --user apiuser:wpdemo1234 -H "Content-Type: text/csv" -X PUT -d "@out/runbook.csv" https://$(velostrata_ip)/auto/rest/waves/w1
+	@echo "Creating wave..."
+	@curl -k --user apiuser:wpdemo1234 -H "Content-Type: text/csv" -X PUT --upload-file out/runbook.csv https://$(velostrata_ip)/auto/rest/waves/w1
+	@echo "Validating wave..."
+	@curl -k --user apiuser:wpdemo1234 -X POST https://$(velostrata_ip)/auto/rest/waves/w1/validations
 
 exec: ## Execs into the builder image to run custom commands
 	$(call dockerRun, bash)
