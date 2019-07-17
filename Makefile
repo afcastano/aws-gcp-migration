@@ -36,7 +36,7 @@ destroy: ## Cleans up the created resources in aws
 	@echo "echo Deleting addresses ..." >> $(DELETE_FILE)
 	@echo "gcloud compute addresses list | grep 'velostrata-edge\\|wordpress' | awk '{printf \"gcloud compute addresses delete %s --region %s -q\\\n\", \$$1, \$$5}' | bash" >> $(DELETE_FILE)
 	@echo "echo deleting aws instance..." >> $(DELETE_FILE)
-	@echo "aws ec2 describe-instances --filter \"Name=tag:Name,Values=Velostrata*\" --query \"Reservations[].Instances[].InstanceId\" --region ap-southeast-1 | awk '{if(NR==2) printf \"aws ec2 terminate-instances --instance-ids %s --region ap-southeast-1 \\\n\", \$$0}' | bash" >> $(DELETE_FILE)
+	@echo "aws ec2 describe-instances --filter \"Name=tag:Name,Values=Velostrata*\" \"Name=instance-state-name,Values=running\" --query \"Reservations[].Instances[].InstanceId\" --region ap-southeast-1 | awk '{if(NR==2) printf \"aws ec2 terminate-instances --instance-ids %s --region ap-southeast-1 \\\n\", \$$0}' | bash" >> $(DELETE_FILE)
 	@chmod 777 $(DELETE_FILE)
 	$(call dockerRun, out/delete_instances.sh)
 	@echo "Terraform destroy"
