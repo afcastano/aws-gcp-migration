@@ -69,3 +69,5 @@ STATE=-state=$(STATE_FILE)
 STATE_OUT=-state-out=$(STATE_FILE)
 PLAN=$(OUT_DIR)/terraform.plan
 PLAN_OUT=-out=$(PLAN)
+
+include velostrata-config/velos.mk

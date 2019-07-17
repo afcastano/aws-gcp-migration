@@ -1,9 +1,7 @@
-+ Use api to run job
++ Ask question in stack overflow about full migration not working.
 + Add second tier to AWS network
 + Add seconf tier to GCP network
-+ Ask question in stack overflow about full migration not working.
 + Write up documentation (Blog)
-+ Add aws delete script
 + Migrate DB (Including WP redirection)
 
 
@@ -12,4 +10,6 @@ DONE
 + Template info for API
 + Use Velostrata API to set up runbook and waves
 + Refactor gcloud delete script
++ Use api to run job
++ Add aws delete script
 
