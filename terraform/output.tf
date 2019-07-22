@@ -7,7 +7,7 @@ output "AWS WP url" {
 }
 
 output "AWS update local host file" {
-  value = "sudo make aws_update_host wpip=${module.aws_wordpress.wp_eip}"
+  value = "sudo make update_host wpip=${module.aws_wordpress.wp_eip}"
 }
 
 output "AWS DB Elastic DNS name" {
