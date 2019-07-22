@@ -39,6 +39,7 @@ resource "local_file" "velostrata_variables" {
   export gcp_region=${var.gcp_region}
   export gcp_project_id=${var.gcp_projectId}
   export velostrata_ip=${module.velostrata.velostrata_manager_ip}
+  export wpip=${module.aws_wordpress.wp_eip}
   EOF
   filename = "${path.module}/out/velostrata.env"
 }
