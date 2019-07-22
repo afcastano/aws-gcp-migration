@@ -6,7 +6,6 @@ DIR=${CURDIR}
 OUT_DIR=./out
 
 eula: ## Open browser to accept velostrata eula
-	echo "ip $(DIR) $(velostrata_ip)"
 	open "https://$(velostrata_ip)"
 
 configure: ## Set up source and target clouds. Also creates a runbook ready to start.
@@ -23,7 +22,7 @@ configure: ## Set up source and target clouds. Also creates a runbook ready to s
 	
 	echo "Creating source cloud details"
 	curl -k --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/aws-cloud-details.json" https://$(velostrata_ip)/velostrata/api/v42/cloud/details
-	sleep 5
+	sleep 15
 	
 	echo "Creating cloud extensions"
 	$(eval task = $(shell curl -k --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/cloud-extensions.json" https://$(velostrata_ip)/velostrata/api/v42/cloudextensions 2>/dev/null | jq -r '.value'))
