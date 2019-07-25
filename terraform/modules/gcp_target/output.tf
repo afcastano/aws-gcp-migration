@@ -13,3 +13,7 @@ output "public_subnet_name" {
 output "public_subnet_id" {
     value = "${google_compute_subnetwork.public-subnet.self_link}"
 }
+
+output "lb_ip" {
+    value = "${google_compute_forwarding_rule.wp-lb.ip_address}"
+}

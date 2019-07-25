@@ -1,22 +1,22 @@
-output "AWS-1 update local host file" {
+output "1 update local host file" {
   value = <<EOF
 
   make update_host wp_dns=${module.aws_wordpress.wp_eip}
   EOF
 }
 
-output "AWS-2 WP url" {
+output "2 WP url" {
   value = "make open_demo"
 }
 
-output "AWS-3 Connect to bastion instance" {
+output "3 Connect to bastion instance" {
   value = <<EOF
 
   sudo chmod 600 terraform/out/aws_key.pem && ssh -i terraform/out/aws_key.pem ubuntu@${module.aws_wordpress.bastion_eip}
   EOF
 }
 
-output "AWS-4 Internal ips" {
+output "4 Internal ips" {
   value = <<EOF
 
   SSH to bastion and then, using same credentials go to:
@@ -24,6 +24,11 @@ output "AWS-4 Internal ips" {
   DB instance ip: ${module.aws_wordpress.db_ip}
   EOF
 }
+
+output "5 Gcp wp ip" {
+  value = "${module.gcp_target.lb_ip}"
+}
+
 
 resource "local_file" "aws_key" {
     sensitive_content = "${module.aws_wordpress.instance_key}"

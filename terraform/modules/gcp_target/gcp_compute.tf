@@ -6,7 +6,7 @@ resource "google_compute_address" "gcp-ip" {
 resource "google_compute_instance" "gcp-bastion" {
   name         = "gcp-bastion"
   machine_type = "${var.instance_type}"
-  zone         = "${var.zone}"
+  zone         = "${data.google_compute_zones.available.names[0]}"
   tags         = ["bastion"]
 
   boot_disk {
