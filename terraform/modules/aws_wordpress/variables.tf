@@ -21,4 +21,10 @@ variable aws_pub_subnet_1_cidr {
   default = "172.16.5.0/24"
 }
 
-variable "availability_zone" {}
+variable aws_pub_subnet_2_cidr {
+  default = "172.16.6.0/24"
+}
+
+variable aws_wp_subnet_cidr {
+  default = "172.16.4.0/24"
+}

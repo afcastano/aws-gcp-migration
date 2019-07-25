@@ -35,38 +35,66 @@ resource "aws_subnet" "pub_subnet_1"{
       Name = "public subnet"
   }
   depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
-  availability_zone = "${var.availability_zone}"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
 }
 
-# NAT Gateway configuration for web subnet
-# resource "aws_eip" "web-subnet-nat-eip" {
-#   vpc      = true
-#   depends_on = ["aws_internet_gateway.app_igw"]
-# }
-# resource "aws_nat_gateway" "web-subnet-nat-gw" {
-#   allocation_id = "${aws_eip.web-subnet-nat-eip.id}"
-#   subnet_id = "${aws_subnet.pub_subnet_1.id}"
-#   depends_on = ["aws_internet_gateway.app_igw"]
-# }
+#provision public subnet 2 (Required for load balancer)
+resource "aws_subnet" "pub_subnet_2"{
+  
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_pub_subnet_2_cidr}"
+  tags {
+      Name = "public subnet 2"
+  }
+  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+}
 
-# # Web subnet routes for NAT
-# resource "aws_route_table" "nat-routes" {
-#     vpc_id = "${aws_vpc.app_vpc.id}"
-#     route {
-#         cidr_block = "0.0.0.0/0"
-#         nat_gateway_id = "${aws_nat_gateway.web-subnet-nat-gw.id}"
-#     }
+resource "aws_default_route_table" "aws-vpc" {
+  default_route_table_id = "${aws_vpc.app_vpc.default_route_table_id}"
+  route {
+    cidr_block  = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.app_igw.id}"
+  }
+}
 
-#     # Attach the propagated routes from the vpn to this route table.
-#     propagating_vgws = [
-#       "${aws_vpn_gateway.aws-vpn-gw.id}"
-#     ]
+# NAT Gateway configuration for private subnetss
+resource "aws_eip" "nat-eip" {
+  vpc      = true
+  depends_on = ["aws_internet_gateway.app_igw"]
+}
+resource "aws_nat_gateway" "nat-gw" {
+  allocation_id = "${aws_eip.nat-eip.id}"
+  subnet_id = "${aws_subnet.pub_subnet_1.id}"
+  depends_on = ["aws_internet_gateway.app_igw"]
+}
 
-#     tags {
-#         Name = "web-subnet-routes-1"
-#     }
-# }
-# resource "aws_route_table_association" "web-subnet-routes" {
-#     subnet_id = "${aws_subnet.wp_subnet.id}"
-#     route_table_id = "${aws_route_table.nat-routes.id}"
-# }
+## AWS PRIVATE NETWORKS ##############################################
+
+#provision wordpress subnet
+resource "aws_subnet" "wp_subnet" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_wp_subnet_cidr}"
+  tags {
+    Name = "WordPress subnet"
+  }
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
+}
+
+# WP subnet routes for NAT
+resource "aws_route_table" "wp-nat-routes" {
+    vpc_id = "${aws_vpc.app_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        nat_gateway_id = "${aws_nat_gateway.nat-gw.id}"
+    }
+
+    tags {
+        Name = "web-subnet-routes-1"
+    }
+}
+resource "aws_route_table_association" "wp-subnet-routes" {
+    subnet_id = "${aws_subnet.wp_subnet.id}"
+    route_table_id = "${aws_route_table.wp-nat-routes.id}"
+}

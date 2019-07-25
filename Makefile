@@ -48,7 +48,10 @@ exec_terraform: ## Execs into the terraform builder image to run custom commands
 
 update_host: ## Updates local etc/hosts with WP ip. Requires wpip env variable to be set.
 	$(call terraform, update_host)
-		
+
+open_demo:
+	$(call terraform, open_demo)
+
 
 .DEFAULT_GOAL := help
 

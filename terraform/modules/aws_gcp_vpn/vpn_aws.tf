@@ -12,6 +12,7 @@ resource "aws_customer_gateway" "aws-cgw" {
   }
 }
 
+# TODO use the individual resource for propagating routes.
 resource "aws_default_route_table" "aws-vpc" {
   default_route_table_id = "${var.aws_route_table_id}"
   route {
