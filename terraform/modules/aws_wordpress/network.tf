@@ -83,7 +83,7 @@ resource "aws_subnet" "wp_subnet" {
 }
 
 # WP subnet routes for NAT
-resource "aws_route_table" "wp-nat-routes" {
+resource "aws_route_table" "wp-subnet-routes" {
     vpc_id = "${aws_vpc.app_vpc.id}"
     route {
         cidr_block = "0.0.0.0/0"
@@ -96,5 +96,5 @@ resource "aws_route_table" "wp-nat-routes" {
 }
 resource "aws_route_table_association" "wp-subnet-routes" {
     subnet_id = "${aws_subnet.wp_subnet.id}"
-    route_table_id = "${aws_route_table.wp-nat-routes.id}"
+    route_table_id = "${aws_route_table.wp-subnet-routes.id}"
 }

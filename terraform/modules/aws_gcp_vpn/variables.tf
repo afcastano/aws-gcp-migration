@@ -1,6 +1,5 @@
 variable "aws_vpc_id" {}
 variable "aws_route_table_id" {}
-variable "aws_igw_id" {}
 
 variable "gcp_region" {}
 variable "gcp_vpc_name" {}

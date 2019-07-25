@@ -10,9 +10,9 @@ output "vpc_id" {
 #   value = "${aws_security_group.pub.id}"
 # }
 
-# output "route_table_id" {
-#   value = "${aws_vpc.app_vpc.default_route_table_id}"
-# }
+output "route_table_id" {
+  value = "${aws_route_table.wp-subnet-routes.id}"
+}
 
 # output "igw_id" {
 #   value = "${aws_internet_gateway.app_igw.id}"
