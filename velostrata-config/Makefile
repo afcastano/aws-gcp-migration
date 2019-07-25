@@ -43,7 +43,7 @@ configure: ## Set up source and target clouds. Also creates a runbook ready to s
 	curl -k --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/generate-runbook.json" -O -J  https://$(velostrata_ip)/auto/rest/runbooks
 	echo "Updating runbook..."
 	mkdir -p out
-	awk -F, -v OFS=, 'NR==2{$$1="1"; $$15="n1-standard-4"; $$20="true"}{print}' Velostrata_Runbook.csv > ${DIR}/out/runbook.csv
+	awk -F, -v OFS=, 'NR>1{$$1="1"; $$15="n1-standard-4"; $$20="true"}{print}' Velostrata_Runbook.csv > ${DIR}/out/runbook.csv
 	rm Velostrata_Runbook.csv
 	echo "Creating wave..."
 	curl -k --user apiuser:wpdemo1234 -H "Content-Type: text/csv" -X PUT --upload-file ${DIR}/out/runbook.csv https://$(velostrata_ip)/auto/rest/waves/w1

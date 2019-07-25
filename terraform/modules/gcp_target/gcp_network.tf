@@ -28,8 +28,8 @@ resource "google_compute_target_pool" "wp-pool" {
   name = "wp-pool"
 
   instances = [
-    "${data.google_compute_zones.available.names[0]}/wp1",
-    "${data.google_compute_zones.available.names[0]}/wp2",
+    "${data.google_compute_zones.available.names[0]}/wp-server-0",
+    "${data.google_compute_zones.available.names[0]}/wp-server-1",
   ]
 
   health_checks = [

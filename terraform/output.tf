@@ -5,30 +5,38 @@ output "1 update local host file" {
   EOF
 }
 
-output "2 WP url" {
+output "2 Configure Wordpress" {
   value = "make open_demo"
 }
 
-output "3 Connect to bastion instance" {
-  value = <<EOF
-
-  sudo chmod 600 terraform/out/aws_key.pem && ssh -i terraform/out/aws_key.pem ubuntu@${module.aws_wordpress.bastion_eip}
-  EOF
+output "3 Accept eula" {
+  value = "make eula"
 }
 
-output "4 Internal ips" {
-  value = <<EOF
-
-  SSH to bastion and then, using same credentials go to:
-  WP servers ip: [${join(", ", module.aws_wordpress.wp_ip)}]
-  DB instance ip: ${module.aws_wordpress.db_ip}
-  EOF
+output "4 Run migration" {
+  value = "make velostrata_migrate"
 }
 
-output "5 Gcp wp ip" {
+output "5 (After migration) update host with GCP ip" {
   value = "${module.gcp_target.lb_ip}"
 }
 
+output "6 Check out WordPres in google" {
+  value = "make open_demo"
+}
+output "7 (INFO) Internal ips" {
+  value = <<EOF
+
+  Connect to bastion: sudo chmod 600 terraform/out/aws_key.pem && ssh -i terraform/out/aws_key.pem ubuntu@${module.aws_wordpress.bastion_eip}
+  
+  AWS private ips:
+  WP servers ip: [${join(", ", module.aws_wordpress.wp_ip)}]
+  DB instance ip: ${module.aws_wordpress.db_ip}
+
+  Gcp bastion public ip: ${module.gcp_target.bastion_ip}
+  Gcp velostrata manager url: https://${module.velostrata.velostrata_manager_ip}
+  EOF
+}
 
 resource "local_file" "aws_key" {
     sensitive_content = "${module.aws_wordpress.instance_key}"
@@ -49,12 +57,4 @@ resource "local_file" "velostrata_variables" {
   export velostrata_ip=${module.velostrata.velostrata_manager_ip}
   EOF
   filename = "${path.module}/out/velostrata.env"
-}
-
-output "gcp bastion public ip" {
-  value = "${module.gcp_target.bastion_ip}"
-}
-
-output "gcp velostrata manager url" {
-  value = "https://${module.velostrata.velostrata_manager_ip}"
 }

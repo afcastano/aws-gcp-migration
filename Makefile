@@ -30,10 +30,10 @@ apply: ## Executes the terraform plan and copy environment to velostrata
 eula: ## Open browser to accept velostrata eula
 	$(call velostrata, eula)
 
-configure_velostrata: ## Set up source and target clouds. Also creates a runbook ready to start.
-	$(call velostrata, configure)
-
 velostrata_migrate: ## Run migration job
+	$(call velostrata, configure)
+	echo validating...
+	sleep 30
 	$(call velostrata, migrate)
 
 destroy: ## Cleans up the created resources in aws and gcp

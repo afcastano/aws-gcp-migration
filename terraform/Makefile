@@ -10,7 +10,7 @@ plan: ## Creates the plan to install WordPress in Aws, set up networks in both a
 apply: ## Executes the terraform plan
 	$(call dockerRun, terraform apply $(STATE_OUT) $(PLAN))
 	echo "Apply finished successfuly!"
-	echo "Please run update_host target with sudo privileges as indicated in the terraform output..."
+	echo "Please follow the previous steps in order to configure WordPress"
 
 destroy: ## Cleans up the created resources in aws and gcp
 	echo "Terraform destroy"

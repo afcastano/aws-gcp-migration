@@ -96,7 +96,7 @@ resource "aws_instance" "wp" {
 
   key_name = "${aws_key_pair.demo_keys.key_name}"
   tags {
-    Name = "WordPress server ${count.index}"
+    Name = "wp-server-${count.index}"
     SELECTOR = "wp"
   }
 

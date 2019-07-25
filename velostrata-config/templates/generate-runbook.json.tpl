@@ -4,7 +4,7 @@
     "tags": [
         {
             "key": "SELECTOR",
-            "value": "bastion"
+            "value": "wp"
         }
     ],
     "ceId": "ce",

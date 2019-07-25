@@ -36,7 +36,9 @@ resource "google_compute_firewall" "gcp-allow-vpn" {
 
   target_tags = [
     "bastion",
-    "wp"
+    "wp",
+    "fw-velostrata",
+    "fw-velosmanager"
   ]
 
   destination_ranges = [
