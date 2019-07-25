@@ -2,13 +2,17 @@ output "vpc_id" {
   value = "${aws_vpc.app_vpc.id}"
 }
 
-# output "subnet_id" {
-#   value = "${aws_subnet.pub_subnet_1.id}"
-# }
+output "subnet_id" {
+  value = "${aws_subnet.pub_subnet_1.id}"
+}
 
-# output "security_group_id" {
-#   value = "${aws_security_group.pub.id}"
-# }
+output "availability_zone" {
+  value = "${data.aws_availability_zones.available.names[0]}"
+}
+
+output "security_group_id" {
+  value = "${aws_security_group.pub.id}"
+}
 
 output "route_table_id" {
   value = "${aws_route_table.wp-subnet-routes.id}"

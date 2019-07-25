@@ -37,14 +37,14 @@ module "aws_gcp_vpn" {
 
 }
 
-# module "velostrata" {
-#   source = "./modules/velostrata"
+module "velostrata" {
+  source = "./modules/velostrata"
   
-#   aws_vpc_id = "${module.aws_wordpress.vpc_id}"
-#   gcp_projectId = "${var.gcp_projectId}"
-#   gcp_vpc_name = "${module.gcp_target.vpc_name}"
-#   gcp_zone = "${data.google_compute_zones.available.names[0]}"
-#   gcp_velos_manager_subnet = "${module.gcp_target.public_subnet_name}"
-#   gcp_instance_type = "${var.gcp_instance_type}"
+  aws_vpc_id = "${module.aws_wordpress.vpc_id}"
+  gcp_projectId = "${var.gcp_projectId}"
+  gcp_vpc_name = "${module.gcp_target.vpc_name}"
+  gcp_zone = "${module.gcp_target.bastion_zone}"
+  gcp_velos_manager_subnet = "${module.gcp_target.public_subnet_name}"
+  gcp_instance_type = "${var.gcp_instance_type}"
 
-# }
+}

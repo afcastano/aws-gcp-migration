@@ -17,3 +17,7 @@ output "public_subnet_id" {
 output "lb_ip" {
     value = "${google_compute_forwarding_rule.wp-lb.ip_address}"
 }
+
+output "bastion_zone" {
+    value = "${google_compute_instance.gcp-bastion.zone}"
+}
