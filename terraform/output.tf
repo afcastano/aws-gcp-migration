@@ -20,7 +20,7 @@ output "AWS-4 Internal ips" {
   value = <<EOF
 
   SSH to bastion and then, using same credentials go to:
-  WP servers ip: ${module.aws_wordpress.wp_ip}
+  WP servers ip: [${join(", ", module.aws_wordpress.wp_ip)}]
   DB instance ip: ${module.aws_wordpress.db_ip}
   EOF
 }

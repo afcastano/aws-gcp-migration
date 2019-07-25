@@ -81,11 +81,12 @@ resource "null_resource" "db_provisioner" {
     timeout     = "30s"
   }
 
-  depends_on = ["aws_eip_association.bastion_eip_assoc", "aws_instance.db"]
+  # Try to run this last
+  depends_on = ["aws_eip_association.bastion_eip_assoc", "aws_instance.db", "aws_alb_listener.list"]
 }
 
 # wp server ############################
-resource "aws_instance" "wp1" {
+resource "aws_instance" "wp" {
   ami = "${data.aws_ami.ubuntu.id}"
   vpc_security_group_ids = [
     "${aws_security_group.wp.id}"
@@ -95,16 +96,18 @@ resource "aws_instance" "wp1" {
 
   key_name = "${aws_key_pair.demo_keys.key_name}"
   tags {
-    Name = "WordPress server 1"
+    Name = "WordPress server ${count.index}"
     SELECTOR = "wp"
   }
+
+  count = 2
 }
 
 # I would initialize the vm via user_data attribute, but velostrata does not like it.
 # https://stackoverflow.com/questions/57016394/velostrata-migration-from-aws-to-gcp-failed-cloud-instance-boot-failed
-resource "null_resource" "wp1_provisioner" {
+resource "null_resource" "wp_provisioner" {
   triggers = {
-    wp_instace = "${aws_instance.wp1.id}"
+    wp_instace = "${element(aws_instance.wp.*.private_ip, count.index)}"
   }
   provisioner "file" {
     source      = "scripts/init_velostrata.sh"
@@ -127,7 +130,7 @@ resource "null_resource" "wp1_provisioner" {
   connection {
     type                = "ssh"
     private_key         = "${tls_private_key.demo_private_key.private_key_pem}"
-    host                = "${aws_instance.wp1.private_ip}"
+    host                = "${element(aws_instance.wp.*.private_ip, count.index)}"
     user                = "ubuntu"
     bastion_host        = "${aws_eip.bastion_eip.public_ip}"
     bastion_private_key = "${tls_private_key.demo_private_key.private_key_pem}"
@@ -135,6 +138,7 @@ resource "null_resource" "wp1_provisioner" {
     timeout             = "30s"
   }
   depends_on = ["null_resource.db_provisioner"]
+  count = 2
 }
 
 # LOAD BALANCER ################
@@ -165,8 +169,9 @@ resource "aws_alb_target_group" "targ" {
 
 resource "aws_alb_target_group_attachment" "attach_web" {
   target_group_arn = "${aws_alb_target_group.targ.arn}"
-  target_id = "${aws_instance.wp1.id}"
+  target_id = "${element(aws_instance.wp.*.id, count.index)}"
   port = 8080
+  count = 2
 }
 
 resource "aws_alb_listener" "list" {

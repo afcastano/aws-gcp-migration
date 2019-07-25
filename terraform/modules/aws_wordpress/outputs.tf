@@ -31,7 +31,7 @@ output "db_ip" {
 }
 
 output "wp_ip" {
-  value = "${aws_instance.wp1.private_ip}"
+  value = "${aws_instance.wp.*.private_ip}"
 }
 
 output "wp_eip" {
