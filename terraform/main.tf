@@ -6,6 +6,12 @@ provider "aws" {
 provider "tls" {
 }
 
+provider "google-beta" {
+  credentials = "${file("${var.gcp_terraform_sa}")}"
+  region      = "${var.gcp_region}"
+  project     = "${var.gcp_projectId}"
+}
+
 provider "google" {
   credentials = "${file("${var.gcp_terraform_sa}")}"
   region      = "${var.gcp_region}"

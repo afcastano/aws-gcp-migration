@@ -19,9 +19,9 @@ destroy: ## Cleans up the created resources in aws and gcp
 exec: ## Execs into the builder container
 	$(call dockerRun, bash)
 
-update_host: WP_IP := $(strip $(shell dig +short $(wp_dns)))
+update_host: MY_IP := $(if $(wp_dns), $(strip $(shell dig +short $(wp_dns))), $(wp_ip))
 update_host:  ## Updates local etc/hosts with WP ip. Requires wpip env variable to be set.
-	sudo bash -c "grep -q 'wp-demo' /etc/hosts && sed -i '' 's/.* wp-demo/$(WP_IP)    wp-demo/g' /etc/hosts || echo '$(wpip)    wp-demo' >> /etc/hosts"
+	sudo bash -c "grep -q 'wp-demo' /etc/hosts && sed -i '' 's/.* wp-demo/$(MY_IP)    wp-demo/g' /etc/hosts || echo '$(MY_IP)    wp-demo' >> /etc/hosts"
 
 open_demo:
 	open http://wp-demo

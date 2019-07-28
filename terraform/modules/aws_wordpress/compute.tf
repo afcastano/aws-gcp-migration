@@ -158,7 +158,7 @@ resource "aws_alb_target_group" "targ" {
     timeout             = 5
     path                = "/"
     interval            = 30
-    port                = 8080
+    port                = 80
     matcher             = "200-399"
   }
   stickiness {
@@ -170,7 +170,7 @@ resource "aws_alb_target_group" "targ" {
 resource "aws_alb_target_group_attachment" "attach_web" {
   target_group_arn = "${aws_alb_target_group.targ.arn}"
   target_id = "${element(aws_instance.wp.*.id, count.index)}"
-  port = 8080
+  port = 80
   count = 2
 }
 

@@ -31,10 +31,15 @@ eula: ## Open browser to accept velostrata eula
 	$(call velostrata, eula)
 
 velostrata_migrate: ## Run migration job
+	echo configuring velostrata...
 	$(call velostrata, configure)
-	echo validating...
 	sleep 30
+	echo starting migration...
 	$(call velostrata, migrate)
+	echo updating instance group...
+	sleep 30
+	$(call velostrata, update_instance_group)
+	echo done
 
 destroy: ## Cleans up the created resources in aws and gcp
 	$(call velostrata, clean)

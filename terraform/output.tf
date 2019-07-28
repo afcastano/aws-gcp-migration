@@ -18,7 +18,10 @@ output "4 Run migration" {
 }
 
 output "5 (After migration) update host with GCP ip" {
-  value = "${module.gcp_target.lb_ip}"
+  value = <<EOF
+  
+  make update_host wp_ip=${module.gcp_target.lb_ip}
+  EOF
 }
 
 output "6 Check out WordPres in google" {
@@ -51,7 +54,8 @@ resource "local_file" "velostrata_variables" {
   export security_group=${module.aws_wordpress.security_group_id}
   export aws_key=${module.velostrata.velostrata_aws_key}
   export aws_secret=${module.velostrata.velostrata_aws_secret}
-  export gcp_workload_subnet_id=${module.gcp_target.public_subnet_id}
+  export gcp_workload_subnet_id=${module.gcp_target.wp_subnet_id}
+  export ce_subnet_id=${module.gcp_target.public_subnet_id}
   export gcp_region=${var.gcp_region}
   export gcp_project_id=${var.gcp_projectId}
   export velostrata_ip=${module.velostrata.velostrata_manager_ip}

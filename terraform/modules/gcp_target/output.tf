@@ -14,8 +14,12 @@ output "public_subnet_id" {
     value = "${google_compute_subnetwork.public-subnet.self_link}"
 }
 
+output "wp_subnet_id" {
+    value = "${google_compute_subnetwork.private-subnet.self_link}"
+}
+
 output "lb_ip" {
-    value = "${google_compute_forwarding_rule.wp-lb.ip_address}"
+    value = "${google_compute_global_forwarding_rule.wp-lb.ip_address}"
 }
 
 output "bastion_zone" {

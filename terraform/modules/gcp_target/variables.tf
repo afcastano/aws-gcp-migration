@@ -13,7 +13,7 @@ variable gcp_public_cidr {
   default = "10.240.0.0/24"
 }
 variable gcp_private_cidr {
-  default = "10.240.1.0/24"
+  default = "10.240.1.0/28"
 }
 
 variable gcp_velostrata_cidr {
