@@ -1,6 +1,6 @@
 # WORK IN PROGRESS
 
-Use terraform to deploy a WordPress 3 tier application in AWS and migrate it to GCP using velostrata.
+Use terraform to deploy a 3-tier WordPress application in AWS and migrate it to GCP using Velostrata.
 
 This project serves two purposes:
 - A tutorial explaining the different steps and concepts to set up and migrate a Word Press application.
@@ -11,14 +11,13 @@ This project serves two purposes:
     - Tier 1: Public access - Load balancer and Bastion host
     - Tier 2: Private access - Multiple WordPress servers
     - Tier 3: Private access - DB server
-- How to define security groups for each tier.    
-- How to stablish a VPN between AWS and GCP
-    - Deploy a high availability VPN between GCP and AWS.
+- How to define security groups for each tier
+- How to deploy a high availability VPN between GCP and AWS
 - How to migrate Tier 2 from AWS to GCP
-    - Install and configure Velostrata in GCP.
-    - Set up runbooks and waves in Velostrata.
-    - Run a Cloud migration job.
-- How to set up an external load balancer in GCP for balancing trafic between the migrated instances.
+    - Install and configure Velostrata in GCP
+    - Set up runbooks and waves in Velostrata
+    - Run a Cloud migration job
+- How to set up an external load balancer in GCP for balancing trafic between the migrated instances
 
 ## Demo contents
 - Prerequisites:
