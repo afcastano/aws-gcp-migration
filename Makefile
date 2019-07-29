@@ -15,14 +15,10 @@ help: ## This help
 
 # Main targets
 
-init: ## Creates the tools docker image and inits terraform. (Only needed on a fresh repo)
+deploy: ## Deploys the WP application in AWS and sets up the VPN
 	docker build -t demo-tools ./images/demo-tools
 	$(call terraform, init)
-
-plan: ## Creates the plan to install WordPress in Aws, set up networks in both aws and gcp
 	$(call terraform, plan)
-
-apply: ## Executes the terraform plan and copy environment to velostrata
 	$(call terraform, apply)
 	mkdir -p velostrata-config/out
 	cp terraform/out/velostrata.env velostrata-config/out/velostrata.env
@@ -44,12 +40,6 @@ velostrata_migrate: ## Run migration job
 destroy: ## Cleans up the created resources in aws and gcp
 	$(call velostrata, clean)
 	$(call terraform, destroy)
-
-exec_velostrata: ## Execs into the velostrata builder image to run custom commands
-	$(call velostrata, exec)
-
-exec_terraform: ## Execs into the terraform builder image to run custom commands
-	$(call terraform, exec)
 
 update_host: ## Updates local etc/hosts with WP ip. Requires wpip env variable to be set.
 	$(call terraform, update_host)

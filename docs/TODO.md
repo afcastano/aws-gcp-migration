@@ -1,11 +1,11 @@
-+ Add second tier to AWS network
-+ Add seconf tier to GCP network
 + Write up documentation (Blog)
 + Ask question in stack overflow about full migration not working.
 + Migrate DB (Including WP redirection)
 
 
 DONE
++ Add second tier to AWS network
++ Add seconf tier to GCP network
 + Refactor makefile
     + Externalise templates (Machine init)
     + Variables exported from each one to communicate.
