@@ -1,4 +1,4 @@
-# Migrate wordpress from AWS to GCP using velostrata
+# Migrate WordPress from AWS to GCP using velostrata
 
 ```
 **WORK IN PROGRESS**
