@@ -1,4 +1,7 @@
-**AWS**
+# Pre requisites
+Be sure to follow these steps before the demo.
+
+## AWS Pre requisites
 
 1. Obtain your aws `key-id` and `key-secret` as explained [here](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html)
 
@@ -10,7 +13,7 @@ export AWS_SECRET_ACCESS_KEY=<YOUR KEY SECRET>
 export AWS_DEFAULT_REGION=ap-southeast-2
 ```
 
-**GCP**
+## GCP Pre requisites
 
 1. Create a GCP project and a service account with `Owner` role as explained [here.](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating_a_service_account).
 

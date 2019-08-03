@@ -40,11 +40,11 @@ destroy: ## Cleans up the created resources in aws and gcp
 	$(call velostrata, clean)
 	$(call terraform, destroy)
 
-update_host: ## Updates local etc/hosts with WP ip. Requires wpip env variable to be set.
-	$(call terraform, update_host)
+wp_aws: ## Open word press demo in AWS. (Updates local etc/hosts)
+	$(call terraform, wp_aws)
 
-open_demo:
-	$(call terraform, open_demo)
+wp_gcp: ## Open word press demo in GCP. (Updates local etc/hosts)
+	$(call terraform, wp_gcp)	
 
 
 .DEFAULT_GOAL := help

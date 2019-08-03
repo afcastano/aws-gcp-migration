@@ -1,10 +1,6 @@
 # Tutorial contents
-- How to deploy a WordPress 3 tier application in AWS
-    - Tier 1: Public access - Load balancer and Bastion host
-    - Tier 2: Private access - Multiple WordPress servers
-    - Tier 3: Private access - DB server
-- How to define security groups for each tier
-- How to deploy a high availability VPN between GCP and AWS
+1. [How to deploy a WordPress 3 tier application in AWS](aws/WORDPRESS-3-TIER.md)
+2. How to deploy a high availability VPN between GCP and AWS
 - How to migrate Tier 2 from AWS to GCP
     - Install and configure Velostrata in GCP
     - Set up runbooks and waves in Velostrata

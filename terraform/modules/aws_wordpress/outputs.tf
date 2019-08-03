@@ -30,7 +30,7 @@ output "wp_ip" {
   value = "${aws_instance.wp.*.private_ip}"
 }
 
-output "wp_eip" {
+output "wp_dns" {
   value = "${aws_alb.alb.dns_name}"
 }
 

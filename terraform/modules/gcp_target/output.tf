@@ -18,7 +18,7 @@ output "wp_subnet_id" {
     value = "${google_compute_subnetwork.private-subnet.self_link}"
 }
 
-output "lb_ip" {
+output "wp_ip" {
     value = "${google_compute_global_forwarding_rule.wp-lb.ip_address}"
 }
 

@@ -1,33 +1,19 @@
-output "1 update local host file" {
-  value = <<EOF
-
-  make update_host wp_dns=${module.aws_wordpress.wp_eip}
-  EOF
+output "1 Configure Wordpress in aws" {
+  value = "make wp_aws"
 }
 
-output "2 Configure Wordpress" {
-  value = "make open_demo"
-}
-
-output "3 Accept eula" {
+output "2 Accept eula" {
   value = "make eula"
 }
 
-output "4 Run migration" {
+output "3 Run migration" {
   value = "make velostrata_migrate"
 }
 
-output "5 (After migration) update host with GCP ip" {
-  value = <<EOF
-  
-  make update_host wp_ip=${module.gcp_target.lb_ip}
-  EOF
+output "4 Check out WordPres in google" {
+  value = "make wp_gcp"
 }
-
-output "6 Check out WordPres in google" {
-  value = "make open_demo"
-}
-output "7 (INFO) Internal ips" {
+output "5 (INFO) Internal ips" {
   value = <<EOF
 
   Connect to bastion: sudo chmod 600 terraform/out/aws_key.pem && ssh -i terraform/out/aws_key.pem ubuntu@${module.aws_wordpress.bastion_eip}
@@ -59,6 +45,8 @@ resource "local_file" "velostrata_variables" {
   export gcp_region=${var.gcp_region}
   export gcp_project_id=${var.gcp_projectId}
   export velostrata_ip=${module.velostrata.velostrata_manager_ip}
+  export wp_aws_dns=${module.aws_wordpress.wp_dns}
+  export wp_gcp_ip=${module.gcp_target.wp_ip}
   EOF
   filename = "${path.module}/out/velostrata.env"
 }

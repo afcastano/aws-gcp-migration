@@ -19,8 +19,8 @@ There is some set up needed in both clouds detailed [here](docs/demo/PRE-REQUISI
 
 ### Steps:
 1. Deploy: `make deploy`
-2. Accept velostrata eula: `make eula`
-3. Open and configure wordpress in aws: `make wp_aws`
+2. Open and configure wordpress in aws: `make wp_aws`
+3. Accept velostrata eula: `make eula`
 4. Run migration: `make velostrata_migrate`
 5. Open wordpress in gcp: `make wp_gcp`
 6. Clean up resources: `make destroy`
