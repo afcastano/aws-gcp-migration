@@ -33,4 +33,4 @@ There is some set up needed in both clouds detailed [here](docs/demo/PRE-REQUISI
 
 **Please take a look at the [Security notes](docs/SECURITY_NOTES.md) before trying this for production.**
 
-Also there is a small [Troubleshooting](docs/TROUBLE_SHOOTING) guide and some [Acknowledgements](docs/ACKNOELEDGEMENTS.md)
+Also there is a small [Troubleshooting](docs/TROUBLE_SHOOTING.md) guide and some [Acknowledgements](docs/ACKNOWLEDGEMENTS.md)
