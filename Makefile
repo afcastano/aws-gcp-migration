@@ -3,7 +3,6 @@
 # HELP
 # This will output the help for each task
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-.PHONY: help
 .SILENT: help init plan apply eula configure_velostrata velostrata_migrate destroy update_host
 
 help: ## This help

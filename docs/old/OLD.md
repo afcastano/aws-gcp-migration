@@ -96,17 +96,3 @@ To connect to the bastion host, follow this steps:
 Now you have connected from a private GCP VM to a private AWS vm using a VPN.
 
 
-# Troubleshooting
-
-Check logs for potential problems: https://cloud.google.com/velostrata/docs/how-to/monitoring/viewing-stackdriver-logs
-
-Be sure to have enough ssd quota available. It requires at least 1.5 TB. Follow this instructions to request a quota increase: https://cloud.google.com/compute/quotas
-
-## Acknowledgements
-
-Based on:
-* Video: https://www.youtube.com/watch?v=pdb9Q6V0WZo
-* Code: https://github.com/Stratoscale/strato-aws-examples/tree/master/terraform/wordpress-3tier-app
-
-GCP VPN:
-* https://cloud.google.com/solutions/automated-network-deployment-multicloud

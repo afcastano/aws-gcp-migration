@@ -1,4 +1,5 @@
 + Write up documentation (Blog)
++ Add more strict FW rules and security groups.
 + Ask question in stack overflow about full migration not working.
 + Migrate DB (Including WP redirection)
 
