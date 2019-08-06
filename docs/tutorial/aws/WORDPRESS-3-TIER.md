@@ -8,8 +8,8 @@ The final solution will look like this:
 
 Let's go through each of the tiers:
 1. VPC and common configuration
-2. Tier 3: Private access - DB server
-3. Tier 2: Private access - Multiple WordPress servers
+2. Tier 3: Restricted access - DB server
+3. Tier 2: Restricted access - Multiple WordPress servers
 4. Tier 1: Public access - Load balancer and Bastion host
 
 ## VPC
@@ -64,5 +64,49 @@ The database tier will be a single EC2 instance running MySql service. The const
 - This EC2 instance would be able to reach internet via NAT.
 
 All other access will be restricted.
+```java
+//TODO add DB subnet code
+```
+## Tier 2: Multiple WordPress servers
+
+For this demo we will create two wordpress instances that will use the database defined in the previous tier. We will create a single subnet and for a high availability installation is recommended to put each server in a different availability zone.
+
+The wordpress constraints are:
+- Allow ssh (http:22) connections from the bastion host in public subnet.
+- Allow port http:80 connections from the load balancer in public subnet.
+- Instances should be able to reach internet via NAT.
+
+Lets create the wordpress subnet:
+See [network.tf](../../../terraform/modules/aws_wordpress/network.tf)
+```HCL
+#provision wordpress subnet
+resource "aws_subnet" "wp_subnet" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_wp_subnet_cidr}"
+  tags {
+    Name = "WordPress subnet"
+  }
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
+}
+
+# WP subnet routes for NAT
+resource "aws_route_table" "wp-subnet-routes" {
+    vpc_id = "${aws_vpc.app_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        nat_gateway_id = "${aws_nat_gateway.nat-gw.id}"
+    }
+
+    tags {
+        Name = "web-subnet-routes-1"
+    }
+}
+resource "aws_route_table_association" "wp-subnet-routes" {
+    subnet_id = "${aws_subnet.wp_subnet.id}"
+    route_table_id = "${aws_route_table.wp-subnet-routes.id}"
+}
+```
+
 
 
