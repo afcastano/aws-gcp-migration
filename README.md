@@ -11,7 +11,7 @@ This project serves two purposes:
 - A set of tutorials guiding how to independently set up the diferent parts of this solution.
 
 ## Demo
-There is some set up needed in both clouds detailed [here](docs/demo/PRE-REQUISITES.md).  
+There is some set up needed in both clouds, please read the [PRE-REQUISITES](docs/demo/PRE-REQUISITES.md) doc for more info.  
 **Summary:**
 - Install Docker (The only local dependency)
 - AWS: Obtain a key id and secret

@@ -15,7 +15,7 @@ Let's go through each of the tiers:
 ## VPC
 First we provision the VPC and define some global resources that will be used by the subnets.
 
-See [network.tf](../../../terraform/modules/aws_wordpress/network.tf)
+See [vpc.tf](../../../terraform/modules/aws_wordpress/vpc.tf)
 
 ```HCL
 ### AWS VPC ####################################################################
@@ -77,7 +77,7 @@ The wordpress constraints are:
 - Instances should be able to reach internet via NAT.
 
 Lets create the wordpress subnet:
-See [network.tf](../../../terraform/modules/aws_wordpress/network.tf)
+See [wp_tier.tf](../../../terraform/modules/aws_wordpress/wp_tier.tf)
 ```HCL
 #provision wordpress subnet
 resource "aws_subnet" "wp_subnet" {
