@@ -62,7 +62,7 @@ migrate: ## Run migration job
 	while [ "$$state" == "Running" ] ; do \
 		echo "Status: \"$$state\"..., retrying in 30 seconds..." ; \
 		sleep 30; \
-		state="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/auto/rest/waves/w1" 2>/dev/null | jq -r '.lastJob.status')" && \
+		state="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/auto/rest/waves/w1" 2>/dev/null | jq -r '.lastJob.status')" \
 	done;
 
 update_instance_group: ## Update instance group for the load balancer

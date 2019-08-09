@@ -41,8 +41,8 @@ resource "google_compute_health_check" "wp-check" {
     port              = 80
 
   }
-  check_interval_sec = 1
-  timeout_sec        = 1
+  check_interval_sec = 5
+  timeout_sec        = 5
 }
 
 resource "google_compute_backend_service" "wp-backend" {
@@ -53,6 +53,7 @@ resource "google_compute_backend_service" "wp-backend" {
   backend {
     group = "${google_compute_instance_group.wp-group.self_link}"
   }
+  connection_draining_timeout_sec = 10
 }
 
 resource "google_compute_url_map" "wp-map" {
