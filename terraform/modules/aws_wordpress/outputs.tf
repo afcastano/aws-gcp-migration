@@ -23,7 +23,7 @@ output "bastion_eip" {
 }
 
 output "db_ip" {
-    value = "${aws_instance.db.private_ip}"
+    value = "${aws_db_instance.wp-db.address}"
 }
 
 output "wp_ip" {

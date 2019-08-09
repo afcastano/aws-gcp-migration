@@ -1,67 +1,62 @@
-# db server ############################
-resource "aws_instance" "db" {
-  ami = "${data.aws_ami.ubuntu.id}"
-  vpc_security_group_ids = [
-    "${aws_security_group.db.id}"
-  ]
-  instance_type = "${var.aws_instance_type}"
-  subnet_id = "${aws_subnet.wp_subnet.id}"
+#### DB Tier ##########
 
-  key_name = "${aws_key_pair.demo_keys.key_name}"
+# provision db subnets
+resource "aws_subnet" "db_subnet_1" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_db_subnet_1_cidr}"
   tags {
-    Name = "WordPress DB"
-    SELECTOR = "db"
+    Name = "WordPress subnet 1"
   }
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
 }
 
-# I would initialize the vm via user_data attribute, but velostrata does not like it.
-# https://stackoverflow.com/questions/57016394/velostrata-migration-from-aws-to-gcp-failed-cloud-instance-boot-failed
-resource "null_resource" "db_provisioner" {
-  triggers = {
-    db_instace = "${aws_instance.db.id}"
+resource "aws_subnet" "db_subnet_2" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_db_subnet_2_cidr}"
+  tags {
+    Name = "WordPress subnet 2"
   }
-  provisioner "remote-exec" {
-    scripts = [
-      "scripts/init_velostrata.sh",
-      "scripts/init_db.sh"
-    ]
-  }
-
-  connection {
-    type        = "ssh"
-    private_key = "${tls_private_key.demo_private_key.private_key_pem}"
-    host        = "${aws_instance.db.private_ip}"
-    user        = "ubuntu"
-
-    bastion_host        = "${aws_eip_association.bastion_eip_assoc.public_ip}"
-    bastion_private_key = "${tls_private_key.demo_private_key.private_key_pem}"
-    bastion_user        = "ubuntu"
-
-    timeout     = "30s"
-  }
-
-  # Try to run this last
-  depends_on = ["aws_eip_association.bastion_eip_assoc", "aws_instance.db", "aws_alb_listener.list"]
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
 }
 
-####### SECURITY GROUPS ################
-## Private access for DB subnet
+#make db subnet group 
+resource "aws_db_subnet_group" "db_subnet" {
+  name       = "db_subnet"
+  subnet_ids = ["${aws_subnet.db_subnet_1.id}", "${aws_subnet.db_subnet_2.id}"]
+}
+
+#provision the database
+resource "aws_db_instance" "wp-db" {
+  identifier = "wp-db"
+  instance_class = "db.t2.micro"
+  allocated_storage = 20
+  engine = "mysql"
+  name = "wordpress_db"
+  password = "${var.aws_wp_db_password}"
+  username = "${var.aws_wp_db_user}"
+  engine_version = "5.7"
+  skip_final_snapshot = true
+  db_subnet_group_name = "${aws_db_subnet_group.db_subnet.name}"
+  vpc_security_group_ids = ["${aws_security_group.db.id}"]
+}
 resource "aws_security_group" "db" {
   name = "db-secgroup"
   vpc_id = "${aws_vpc.app_vpc.id}"
 
-  # ssh access from anywhere
+  # Access from anywhere
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   
   egress {
-    protocol = "-1"
     from_port = 0
     to_port = 0
+    protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }

@@ -66,7 +66,7 @@ resource "null_resource" "wp_provisioner" {
       "chmod +x /tmp/init_velostrata.sh",
       "chmod +x /tmp/init_wp.sh",
       "/tmp/init_velostrata.sh",
-      "/tmp/init_wp.sh ${aws_instance.db.private_ip}",
+      "/tmp/init_wp.sh ${aws_db_instance.wp-db.address} ${var.aws_wp_db_user} ${var.aws_wp_db_password}",
     ]
   }
 
@@ -80,7 +80,7 @@ resource "null_resource" "wp_provisioner" {
     bastion_user        = "ubuntu"
     timeout             = "30s"
   }
-  depends_on = ["null_resource.db_provisioner"]
+  depends_on = ["aws_eip_association.bastion_eip_assoc", "aws_instance.wp"]
   count = 2
 }
 
