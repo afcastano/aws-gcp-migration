@@ -213,7 +213,7 @@ resource "aws_security_group" "wp" {
 ```
 **aws_route_table.wp-subnet-routes:** We have to modify the route table of the subnet to add the nat gateway. We then have to use a `aws_route_table_association` to link the route table to the subnet.
 
-**aws_security_group.wp:** Open ingres from the public subnet on ports 22 and 80 for the bastion host and the load balancer respectively. Egress to everyone, even internet via Nat.
+**aws_security_group.wp:** Open ingress from the public subnet on ports 22 and 80 for the bastion host and the load balancer respectively. Egress to everyone, even internet via NAT.
 
 Now lets provision our WordPress instances:
 See [wp_tier.tf](../../../terraform/modules/aws_wordpress/wp_tier.tf)
