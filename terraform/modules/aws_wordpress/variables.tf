@@ -1,7 +1,7 @@
-# Use Public Xenial cloud image ami
-# Recommend use of Xenial's latest cloud image
-# located here: https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
-# Search for an ami here: https://cloud-images.ubuntu.com/locator/ec2/
+variable gcp_wp_subnet {
+  description = "GCP subnet over the vpn"
+}
+
 variable aws_disk_image {
   description = "Boot disk for gcp_instance_type."
   default = "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"

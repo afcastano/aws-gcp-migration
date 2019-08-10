@@ -54,19 +54,66 @@ resource "aws_vpc_dhcp_options_association" "dns_resolver" {
 
 ## Tier 3: DB tier
 
-For this demo we will install MySql inside an EC2 instance. We could have used RDBS for this, but since the intention of this tutorial is to migrate EC2 instances, then we will do it this way.
+For this demo we will use RBS as persistence mechanism. This layer actually has two subnets as per RBS requirements.
+The network constraints are:
+- Allow ingress on port 3306 from WP subnet.
+- Allow ingress on port 3306 from Public subnet (this is for bastion host debugging).
+- Allow egress to everywhere inside the VPC. (No internet access)
+- Deny everything else.
 
-The database tier will be a single EC2 instance running MySql service. The constraints are:
+See [db_tier.tf](../../../terraform/modules/aws_wordpress/db_tier.tf)
 
-- From a networking perspective, every access will be denied except:
-    - The word press instances on port 3306. (Default mysql port)
-    - The bastion host on port 22 for debugging.
-- This EC2 instance would be able to reach internet via NAT.
+```HCL
+#### DB subnets
+resource "aws_subnet" "db_subnet_1" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_db_subnet_1_cidr}"
+  tags {
+    Name = "WordPress subnet 1"
+  }
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+}
 
-All other access will be restricted.
-```java
-//TODO add DB subnet code
+resource "aws_subnet" "db_subnet_2" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_db_subnet_2_cidr}"
+  tags {
+    Name = "WordPress subnet 2"
+  }
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+}
+
+### SECURITY GROUP 
+resource "aws_security_group" "db" {
+  name = "db-secgroup"
+  vpc_id = "${aws_vpc.app_vpc.id}"
+
+  # TCP access only from wp subnet and vpn
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [
+      "${var.aws_wp_subnet_cidr}", # WP subnet
+      "${var.aws_pub_subnet_1_cidr}", # Public subnet for bastion host debug
+      "${var.gcp_wp_subnet}" # WP subnet on gcp across the vpn
+    ]
+  }
+  
+  # Egress to everyone
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 ```
+
+**db_subnet_1 and db_subnet_2:** The two subnets in different availability zones required for RDS. The `availability_zone` attribute is obtained from a `data` resource defined in [main.tf](../../../terraform/modules/aws_wordpress/main.tf), go check it out.
+
+**aws_security_group.db:** The security group for the db. The `ingress` part defines only the port 3306 and the subnet CIDR as explained before. It also includes `var.gcp_wp_subnet` which will be the GCP subnet that will contain the WordPress instances once migrated, as we will explain in the next tutorial.
+
 ## Tier 2: Multiple WordPress servers
 
 For this demo we will create two wordpress instances that will use the database defined in the previous tier. We will create a single subnet and for a high availability installation is recommended to put each server in a different availability zone.
