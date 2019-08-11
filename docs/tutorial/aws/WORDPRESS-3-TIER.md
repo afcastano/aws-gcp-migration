@@ -211,7 +211,7 @@ resource "aws_security_group" "wp" {
   }
 }
 ```
-**aws_route_table.wp-subnet-routes:** We have to modify the route table of the subnet to add the nat gateway. We then have to use a `aws_route_table_association` to link the route table to the subnet.
+**aws_route_table.wp-subnet-routes:** We have to modify the route table of the subnet to add the NAT gateway. This gateway is defined in the public subnet which is the one who as a route to the internet. We then have to use a `aws_route_table_association` to link the route table to the subnet.
 
 **aws_security_group.wp:** Open ingress from the public subnet on ports 22 and 80 for the bastion host and the load balancer respectively. Egress to everyone, even internet via NAT.
 
@@ -277,6 +277,7 @@ resource "null_resource" "wp_provisioner" {
 ```
 **aws_instance.wp:** Our wp instance. The `ami` attribute comes from a `data` resource defined in [main.tf](../../../terraform/modules/aws_wordpress/main.tf), go check it out.  
 `key_name` Refers to the key we need to connect to the instance via ssh. That key is also created in [main.tf](../../../terraform/modules/aws_wordpress/main.tf).  
+The `tags` attribute in `aws_instance.bastion` will be used by velostrata to select the instances that will be migrated. I'll explain this in the next tutorial.  
 The `count` attribute indicates how many instances of the resource are we creating.
 
 **null_resource.wp_provisioner:** Now, this resource is the one that actually provisions the WordPress software into the instance. There are several aspects worth considering here:
@@ -286,4 +287,125 @@ The `count` attribute indicates how many instances of the resource are we creati
 - `provisioner remote-exec`: Is indicating that terraform should connect to the instance and execute the steps indicated in the `inline` array. Look how we can pass arguments to the script `init_wp.sh`.
 - `connection`: Indicates how terraform should connect to the instance. In this case, we specify that it should go through the bastion host, since the WordPress instances can't be accessed from the internet, remember that NAT allows egress only. Also in this block, we specify the `private_key` to use.  
 **SECURITY NOTE: This is for demo purposes, it is a bad idea to store secrets in the terraform state!**
-- Finally we indicate that this resource should be executed after the external ip of the bastion is assigned, since we need it to reach to the WP instances.
+
+- Finally we indicate that this resource should be executed after the external ip of the bastion is assigned, since we need it to reach to the WP instances. Also we create two of this resources.
+
+## Tier 1: Public subnets
+We need to create two subnets as per `aws_alb` (Load Balancer) requirement. In here we will create the load balancer and the bastion host. The bastion host will allow us to reach the private instances without giving them access directly outside the VPC.
+
+The network constraints are simple:
+- Load balancer can be accesed from internet on TCP port 80.
+- Bastion host can be accessed from internet on TCP port 22.
+
+Creating the subnets is pretty straight forward.
+
+See [wp_tier.tf](../../../terraform/modules/aws_wordpress/public_tier.tf)
+```HCL
+#provision public subnet 1
+resource "aws_subnet" "pub_subnet_1"{
+  
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_pub_subnet_1_cidr}"
+  tags {
+      Name = "public subnet"
+  }
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+}
+
+#provision public subnet 2 (Required for load balancer)
+resource "aws_subnet" "pub_subnet_2"{
+  
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  cidr_block = "${var.aws_pub_subnet_2_cidr}"
+  tags {
+      Name = "public subnet 2"
+  }
+  availability_zone = "${data.aws_availability_zones.available.names[1]}"
+}
+
+resource "aws_route_table" "public-routes" {
+    vpc_id = "${aws_vpc.app_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.app_igw.id}"
+    }
+}
+resource "aws_route_table_association" "public-subnet-routes-1" {
+    subnet_id = "${aws_subnet.pub_subnet_1.id}"
+    route_table_id = "${aws_route_table.public-routes.id}"
+}
+
+resource "aws_route_table_association" "public-subnet-routes-2" {
+    subnet_id = "${aws_subnet.pub_subnet_2.id}"
+    route_table_id = "${aws_route_table.public-routes.id}"
+}
+
+# NAT Gateway configuration for private subnetss
+resource "aws_eip" "nat-eip" {
+  vpc      = true
+  depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
+}
+
+resource "aws_nat_gateway" "nat-gw" {
+  allocation_id = "${aws_eip.nat-eip.id}"
+  subnet_id = "${aws_subnet.pub_subnet_1.id}"
+  depends_on = ["aws_internet_gateway.app_igw"]
+}
+
+#public access sg 
+resource "aws_security_group" "bastion" {
+  name = "bastion-secgroup"
+  vpc_id = "${aws_vpc.app_vpc.id}"
+
+  # ssh access from anywhere
+  ingress {
+    from_port   = 22
+    to_port     = 2
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    protocol = "-1"
+    from_port = 0
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+**aws_route_table.public-routes:** The route table for the public subnets. It has a default route to the internet via an `aws_internet_gateway` defined previously in [vpc.tf](../../../terraform/modules/aws_wordpress/vpc.tf). Note that we define a `aws_route_table_association` for both public subnets.  
+
+**aws_nat_gateway.nat-gw:** We define the NAT gateway and the `eip` external IP here. This gateway will be used by the private subnets that want to reach internet. To create this we depend on the internet gateway and the dns resolver.
+
+**aws_security_group:** The `aws_security_group.bastion` security group allows TCP port 22 from everywhere. This is for ssh connections from our laptop.
+
+The bastion host configuration should be familiar by now:
+```HCL
+#### EC2 INSTANCES #################
+
+# bastion ############################
+resource "aws_instance" "bastion" {
+  ami = "${data.aws_ami.ubuntu.id}"
+  vpc_security_group_ids = [
+    "${aws_security_group.bastion.id}"
+  ]
+  instance_type = "${var.aws_instance_type}"
+  subnet_id = "${aws_subnet.pub_subnet_1.id}"
+
+  key_name = "${aws_key_pair.demo_keys.key_name}"
+  tags {
+    Name = "WordPress Bastion"
+    SELECTOR = "bastion"
+  }
+}
+
+resource "aws_eip" "bastion_eip" {
+  depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
+}
+
+resource "aws_eip_association" "bastion_eip_assoc" {
+  instance_id = "${aws_instance.bastion.id}"
+  allocation_id = "${aws_eip.bastion_eip.id}"
+}
+```
+Again, the `ami` attribute comes from a `data` resource defined in [main.tf](../../../terraform/modules/aws_wordpress/main.tf). We associate the `aws_security_group.bastion` and create an external ip for the instance so that terraform can `ssh` into it.

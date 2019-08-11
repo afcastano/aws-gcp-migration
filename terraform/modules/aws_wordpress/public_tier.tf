@@ -7,7 +7,6 @@ resource "aws_subnet" "pub_subnet_1"{
   tags {
       Name = "public subnet"
   }
-  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
   availability_zone = "${data.aws_availability_zones.available.names[0]}"
 }
 
@@ -19,22 +18,30 @@ resource "aws_subnet" "pub_subnet_2"{
   tags {
       Name = "public subnet 2"
   }
-  depends_on = ["aws_vpc_dhcp_options_association.dns_resolver"]
   availability_zone = "${data.aws_availability_zones.available.names[1]}"
 }
 
-resource "aws_default_route_table" "aws-vpc" {
-  default_route_table_id = "${aws_vpc.app_vpc.default_route_table_id}"
-  route {
-    cidr_block  = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.app_igw.id}"
-  }
+resource "aws_route_table" "public-routes" {
+    vpc_id = "${aws_vpc.app_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.app_igw.id}"
+    }
+}
+resource "aws_route_table_association" "public-subnet-routes-1" {
+    subnet_id = "${aws_subnet.pub_subnet_1.id}"
+    route_table_id = "${aws_route_table.public-routes.id}"
+}
+
+resource "aws_route_table_association" "public-subnet-routes-2" {
+    subnet_id = "${aws_subnet.pub_subnet_2.id}"
+    route_table_id = "${aws_route_table.public-routes.id}"
 }
 
 # NAT Gateway configuration for private subnetss
 resource "aws_eip" "nat-eip" {
   vpc      = true
-  depends_on = ["aws_internet_gateway.app_igw"]
+  depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
 }
 resource "aws_nat_gateway" "nat-gw" {
   allocation_id = "${aws_eip.nat-eip.id}"
@@ -42,6 +49,26 @@ resource "aws_nat_gateway" "nat-gw" {
   depends_on = ["aws_internet_gateway.app_igw"]
 }
 
+#public access sg 
+resource "aws_security_group" "bastion" {
+  name = "bastion-secgroup"
+  vpc_id = "${aws_vpc.app_vpc.id}"
+
+  # ssh access from anywhere
+  ingress {
+    from_port   = 22
+    to_port     = 2
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    protocol = "-1"
+    from_port = 0
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 #### EC2 INSTANCES #################
 
@@ -49,7 +76,7 @@ resource "aws_nat_gateway" "nat-gw" {
 resource "aws_instance" "bastion" {
   ami = "${data.aws_ami.ubuntu.id}"
   vpc_security_group_ids = [
-    "${aws_security_group.pub.id}"
+    "${aws_security_group.bastion.id}"
   ]
   instance_type = "${var.aws_instance_type}"
   subnet_id = "${aws_subnet.pub_subnet_1.id}"
@@ -62,7 +89,7 @@ resource "aws_instance" "bastion" {
 }
 
 resource "aws_eip" "bastion_eip" {
-  depends_on = ["aws_internet_gateway.app_igw"]
+  depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
 }
 
 resource "aws_eip_association" "bastion_eip_assoc" {
@@ -75,6 +102,7 @@ resource "aws_alb" "alb" {
   subnets = ["${aws_subnet.pub_subnet_1.id}", "${aws_subnet.pub_subnet_2.id}"]
   internal = false
   security_groups = ["${aws_security_group.pub.id}"]
+  depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
 }
 
 resource "aws_alb_target_group" "targ" {
