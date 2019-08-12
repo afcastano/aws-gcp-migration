@@ -299,7 +299,7 @@ The network constraints are simple:
 
 Creating the subnets is pretty straight forward.
 
-See [wp_tier.tf](../../../terraform/modules/aws_wordpress/public_tier.tf)
+See [public_tier.tf](../../../terraform/modules/aws_wordpress/public_tier.tf)
 ```HCL
 #provision public subnet 1
 resource "aws_subnet" "pub_subnet_1"{
@@ -409,3 +409,6 @@ resource "aws_eip_association" "bastion_eip_assoc" {
 }
 ```
 Again, the `ami` attribute comes from a `data` resource defined in [main.tf](../../../terraform/modules/aws_wordpress/main.tf). We associate the `aws_security_group.bastion` and create an external ip for the instance so that terraform can `ssh` into it.
+
+Now the load balancer:  
+See [public_tier.tf](../../../terraform/modules/aws_wordpress/public_tier.tf)

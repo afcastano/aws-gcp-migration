@@ -12,3 +12,7 @@ variable gcp_instance_type {
   description = "Machine Type. Correlates to an network egress cap."
   default = "n1-standard-2"
 }
+
+variable gcp_private_cidr {
+  default = "10.240.1.0/28"
+}
