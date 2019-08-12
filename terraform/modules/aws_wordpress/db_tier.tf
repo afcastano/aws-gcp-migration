@@ -32,7 +32,8 @@ resource "aws_security_group" "db" {
     cidr_blocks = [
       "${var.aws_wp_subnet_cidr}", # WP subnet
       "${var.aws_pub_subnet_1_cidr}", # Public subnet for bastion host debug
-      "${var.gcp_wp_subnet}" # WP subnet on gcp across the vpn
+      "${var.gcp_public_subnet}", # Public subnet for gcp bastion access
+      "${var.gcp_wp_subnet}" # Private subnet for velostrata access
     ]
   }
   

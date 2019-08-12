@@ -39,7 +39,11 @@ resource "aws_security_group" "wp" {
     from_port   = 22
     to_port     = 22
     protocol    = "TCP"
-    cidr_blocks = ["${var.aws_pub_subnet_1_cidr}"]
+    cidr_blocks = [
+      "${var.aws_pub_subnet_1_cidr}",
+      "${var.gcp_public_subnet}", # Public subnet for gcp bastion access
+      "${var.gcp_wp_subnet}" # Private subnet for velostrata access
+    ]
   }
   
   # http access from load balancer

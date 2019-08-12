@@ -24,6 +24,7 @@ provider "null" {
 module "aws_wordpress" {
     source = "./modules/aws_wordpress"
     gcp_wp_subnet = "${var.gcp_private_cidr}"
+    gcp_public_subnet = "${var.gcp_public_cidr}"
 }
 
 module "gcp_target" {
@@ -32,6 +33,7 @@ module "gcp_target" {
   region = "${var.gcp_region}"
   projectId = "${var.gcp_projectId}"
   instance_type = "${var.gcp_instance_type}"
+  gcp_public_cidr = "${var.gcp_public_cidr}"
   gcp_private_cidr = "${var.gcp_private_cidr}"
 }
 

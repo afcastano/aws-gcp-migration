@@ -6,12 +6,9 @@ variable instance_type {}
 
 variable gcp_private_cidr {}
 
+variable gcp_public_cidr {}
 
 variable gcp_disk_image {
   description = "Boot disk for gcp_instance_type."
   default = "projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts"
-}
-
-variable gcp_public_cidr {
-  default = "10.240.0.0/24"
 }

@@ -1,3 +1,7 @@
+variable gcp_public_subnet {
+  description = "GCP public subnet over the vpn"
+}
+
 variable gcp_wp_subnet {
   description = "GCP subnet over the vpn"
 }

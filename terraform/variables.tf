@@ -13,6 +13,10 @@ variable gcp_instance_type {
   default = "n1-standard-2"
 }
 
+variable gcp_public_cidr {
+  default = "10.240.0.0/24"
+}
+
 variable gcp_private_cidr {
   default = "10.240.1.0/28"
 }
