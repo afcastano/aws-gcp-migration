@@ -14,8 +14,12 @@ output "security_group_id" {
   value = "${aws_security_group.pub.id}"
 }
 
-output "route_table_id" {
+output "wp_route_table_id" {
   value = "${aws_route_table.wp-subnet-routes.id}"
+}
+
+output "db_route_table_id" {
+  value = "${aws_route_table.db-subnet-routes.id}"
 }
 
 output "bastion_eip" {

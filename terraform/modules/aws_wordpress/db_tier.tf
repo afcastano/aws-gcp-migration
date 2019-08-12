@@ -19,6 +19,28 @@ resource "aws_subnet" "db_subnet_2" {
   availability_zone = "${data.aws_availability_zones.available.names[1]}"
 }
 
+# WP subnet routes for NAT
+resource "aws_route_table" "db-subnet-routes" {
+    vpc_id = "${aws_vpc.app_vpc.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        nat_gateway_id = "${aws_nat_gateway.nat-gw.id}"
+    }
+
+    tags {
+        Name = "db-subnet-routes"
+    }
+}
+resource "aws_route_table_association" "db-subnet-routes-1" {
+    subnet_id = "${aws_subnet.db_subnet_1.id}"
+    route_table_id = "${aws_route_table.db-subnet-routes.id}"
+}
+
+resource "aws_route_table_association" "db-subnet-routes-2" {
+    subnet_id = "${aws_subnet.db_subnet_2.id}"
+    route_table_id = "${aws_route_table.db-subnet-routes.id}"
+}
+
 ### SECURITY GROUP 
 resource "aws_security_group" "db" {
   name = "db-secgroup"
@@ -29,6 +51,19 @@ resource "aws_security_group" "db" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
+    cidr_blocks = [
+      "${var.aws_wp_subnet_cidr}", # WP subnet
+      "${var.aws_pub_subnet_1_cidr}", # Public subnet for bastion host debug
+      "${var.gcp_public_subnet}", # Public subnet for gcp bastion access
+      "${var.gcp_wp_subnet}" # Private subnet for velostrata access
+    ]
+  }
+
+  # Allow ping from subnets
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
     cidr_blocks = [
       "${var.aws_wp_subnet_cidr}", # WP subnet
       "${var.aws_pub_subnet_1_cidr}", # Public subnet for bastion host debug

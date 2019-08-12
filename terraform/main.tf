@@ -40,7 +40,8 @@ module "gcp_target" {
 module "aws_gcp_vpn" {
   source = "./modules/aws_gcp_vpn"
   aws_vpc_id = "${module.aws_wordpress.vpc_id}"
-  aws_route_table_id = "${module.aws_wordpress.route_table_id}"
+  wp_route_table_id = "${module.aws_wordpress.wp_route_table_id}"
+  db_route_table_id = "${module.aws_wordpress.db_route_table_id}"
   gcp_region = "${var.gcp_region}"
   gcp_vpc_name = "${module.gcp_target.vpc_name}"
 

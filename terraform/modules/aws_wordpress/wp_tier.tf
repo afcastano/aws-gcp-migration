@@ -45,6 +45,18 @@ resource "aws_security_group" "wp" {
       "${var.gcp_wp_subnet}" # Private subnet for velostrata access
     ]
   }
+
+  # Allow ping from subnets
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = [
+      "${var.aws_pub_subnet_1_cidr}",
+      "${var.gcp_public_subnet}", # Public subnet for gcp bastion access
+      "${var.gcp_wp_subnet}" # Private subnet for velostrata access
+    ]
+  }
   
   # http access from load balancer
   ingress {
