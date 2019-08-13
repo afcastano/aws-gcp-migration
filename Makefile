@@ -3,7 +3,7 @@
 # HELP
 # This will output the help for each task
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-.SILENT: help init plan apply eula configure_velostrata velostrata_migrate destroy update_host
+.SILENT: help deploy eula velostrata_migrate destroy wp_aws wp_gcp
 
 help: ## This help
 	echo "\033[31mInstall WordPress 3-tier application in Aws and migrate it to GCP"

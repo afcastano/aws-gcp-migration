@@ -48,8 +48,8 @@ resource "aws_security_group" "wp" {
 
   # Allow ping from subnets
   ingress {
-    from_port   = -1
-    to_port     = -1
+    from_port   = 0
+    to_port     = 0
     protocol    = "icmp"
     cidr_blocks = [
       "${var.aws_pub_subnet_1_cidr}",
@@ -64,6 +64,17 @@ resource "aws_security_group" "wp" {
     to_port     = 80
     protocol    = "TCP"
     cidr_blocks = ["${var.aws_pub_subnet_1_cidr}"]
+  }
+
+  # https access from gcp network
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "TCP"
+    cidr_blocks = [
+      "${var.gcp_wp_subnet}",
+      "${var.gcp_public_subnet}" # Public subnet for velostrata access
+    ]
   }
 
   egress {
@@ -126,6 +137,6 @@ resource "null_resource" "wp_provisioner" {
     bastion_user        = "ubuntu"
     timeout             = "30s"
   }
-  depends_on = ["aws_eip_association.bastion_eip_assoc", "aws_instance.wp"]
+  depends_on = ["aws_eip_association.bastion_eip_assoc", "aws_instance.wp", "aws_vpc_dhcp_options_association.dns_resolver"]
   count = 2
 }

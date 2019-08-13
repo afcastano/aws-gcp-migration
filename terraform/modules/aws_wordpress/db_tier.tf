@@ -59,19 +59,6 @@ resource "aws_security_group" "db" {
     ]
   }
 
-  # Allow ping from subnets
-  ingress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
-    cidr_blocks = [
-      "${var.aws_wp_subnet_cidr}", # WP subnet
-      "${var.aws_pub_subnet_1_cidr}", # Public subnet for bastion host debug
-      "${var.gcp_public_subnet}", # Public subnet for gcp bastion access
-      "${var.gcp_wp_subnet}" # Private subnet for velostrata access
-    ]
-  }
-  
   # Egress to everyone
   egress {
     from_port = 0
@@ -99,4 +86,5 @@ resource "aws_db_instance" "wp-db" {
   engine_version = "5.7"
   db_subnet_group_name = "${aws_db_subnet_group.db_subnet.name}"
   vpc_security_group_ids = ["${aws_security_group.db.id}"]
+  skip_final_snapshot = true
 }
