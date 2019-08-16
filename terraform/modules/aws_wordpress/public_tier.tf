@@ -49,7 +49,7 @@ resource "aws_nat_gateway" "nat-gw" {
   depends_on = ["aws_internet_gateway.app_igw"]
 }
 
-#public access sg 
+#bastion access sg 
 resource "aws_security_group" "bastion" {
   name = "bastion-secgroup"
   vpc_id = "${aws_vpc.app_vpc.id}"
@@ -58,6 +58,27 @@ resource "aws_security_group" "bastion" {
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    protocol = "-1"
+    from_port = 0
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+#LoadBalancer access sg 
+resource "aws_security_group" "alb" {
+  name = "pub-secgroup"
+  vpc_id = "${aws_vpc.app_vpc.id}"
+
+  # ssh access from anywhere
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -101,7 +122,7 @@ resource "aws_eip_association" "bastion_eip_assoc" {
 resource "aws_alb" "alb" {
   subnets = ["${aws_subnet.pub_subnet_1.id}", "${aws_subnet.pub_subnet_2.id}"]
   internal = false
-  security_groups = ["${aws_security_group.pub.id}"]
+  security_groups = ["${aws_security_group.alb.id}"]
   depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
 }
 
@@ -138,26 +159,4 @@ resource "aws_alb_listener" "list" {
   }
   load_balancer_arn = "${aws_alb.alb.arn}"
   port = 80
-}
-
-###### SECURITY GROUP
-#public access sg 
-resource "aws_security_group" "pub" {
-  name = "pub-secgroup"
-  vpc_id = "${aws_vpc.app_vpc.id}"
-
-  # ssh access from anywhere
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  
-  egress {
-    protocol = "-1"
-    from_port = 0
-    to_port = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
