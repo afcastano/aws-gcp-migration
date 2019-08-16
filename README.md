@@ -1,9 +1,5 @@
 # Migrate WordPress from AWS to GCP using velostrata
 
-```
-**WORK IN PROGRESS**
-```
-
 Use terraform to deploy a 3-tier WordPress application in AWS and migrate it to GCP using Velostrata.
 
 This project serves two purposes:
