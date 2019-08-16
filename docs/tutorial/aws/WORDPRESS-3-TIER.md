@@ -398,7 +398,7 @@ resource "aws_security_group" "alb" {
 
 **aws_nat_gateway.nat-gw:** We define the NAT gateway and the `eip` external IP here. This gateway will be used by the private subnets that want to reach internet. To create this we depend on the internet gateway and the dns resolver.
 
-**aws_security_group:** The `aws_security_group.bastion` security group allows TCP port 22 from everywhere. This is for ssh connections from our laptop. 
+**aws_security_group:** The `aws_security_group.bastion` security group allows TCP port 22 from everywhere. This is for ssh connections from our laptop.  
 `aws_security_group.alb` allows TCP port 80 connections to the load balancer from everywhere. We want this because this is our entry point to the application.
 
 The bastion host configuration should be familiar by now:
@@ -434,3 +434,54 @@ Again, the `ami` attribute comes from a `data` resource defined in [main.tf](../
 
 Now the load balancer:  
 See [public_tier.tf](../../../terraform/modules/aws_wordpress/public_tier.tf)
+```
+resource "aws_alb" "alb" {
+  subnets = ["${aws_subnet.pub_subnet_1.id}", "${aws_subnet.pub_subnet_2.id}"]
+  internal = false
+  security_groups = ["${aws_security_group.alb.id}"]
+  depends_on = ["aws_internet_gateway.app_igw", "aws_vpc_dhcp_options_association.dns_resolver"]
+}
+
+resource "aws_alb_target_group" "targ" {
+  port = 8080
+  protocol = "HTTP"
+  vpc_id = "${aws_vpc.app_vpc.id}"
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 5
+    path                = "/"
+    interval            = 30
+    port                = 80
+    matcher             = "200-399"
+  }
+  stickiness {
+    type = "lb_cookie"
+    enabled = true
+  }
+}
+
+resource "aws_alb_target_group_attachment" "attach_web" {
+  target_group_arn = "${aws_alb_target_group.targ.arn}"
+  target_id = "${element(aws_instance.wp.*.id, count.index)}"
+  port = 80
+  count = 2
+}
+
+resource "aws_alb_listener" "list" {
+  "default_action" {
+    target_group_arn = "${aws_alb_target_group.targ.arn}"
+    type = "forward"
+  }
+  load_balancer_arn = "${aws_alb.alb.arn}"
+  port = 80
+}
+```
+**aws_alb.alb:** This is the application load balancer. We define the subnets for HA and apply the security group that allows ingres on TCP port 80 from the internet.
+**aws_alb_target_group.targ:** This is the target of the load balancer. It specifies the health check configuration and how it will keep the session between the different backend instances. In this case, we are saying that we will use a lb_cookie to identify who is handling the requests.
+**aws_alb_target_group_attachment.attach_web:** This is where we assgin the EC2 instances to the load balancer. The `count` attribute indicates that we will create two resources and the `target_id` specifies the id of the specific EC2 instance. We use the `count.index` value to get the right instance out of the `aws_instance.wp.*.id` array using the `element` function.
+**aws_alb_listener.list:** This specifies the action the `alb` should take. In this case we are saying that every request on port 80 should be forwarded to the target group defined earlier.
+
+With this you can deploy a 3 tier WordPress solution in AWS using terraform =). In the next tutorial we will create a VPN between AWS and GCP and then migrate this solution to GCP using Velostrata.
+
+For a working demo, please go to https://github.com/3wks/aws-gcp-vpn-demo
