@@ -283,7 +283,7 @@ The `count` attribute indicates how many instances of the resource are we creati
 **null_resource.wp_provisioner:** Now, this resource is the one that actually provisions the WordPress software into the instance. There are several aspects worth considering here:
 - The `null_resource` doesn't actually creates anything. We use this type of resources for things like this.
 - `triggers`: This basically indicates when this resource should be executed. In this case, any time any of the WordPress instance is recreated, we should execute this resource. The trick here is that we assume that if the `private_ip` of an instance changes, it means that it was recreated.
-- `provisioner file`: Those are the scripts that will install the software. We have the WordPress server installer and also a Velostrata package that need to be installed for the migration step explained in the next tutorial. Check the scripts out in the [scripts](../../../terraform/scripts) folder.
+- `provisioner file`: Those are the scripts that will install the software. We have the WordPress server installer and also a Velostrata package that need to be installed for the migration step explained in the next tutorial. Check the scripts out in the [scripts](../../../terraform/scripts) folder. This provisioner copies the files into the wp EC2 VMs.
 - `provisioner remote-exec`: Is indicating that terraform should connect to the instance and execute the steps indicated in the `inline` array. Look how we can pass arguments to the script `init_wp.sh`.
 - `connection`: Indicates how terraform should connect to the instance. In this case, we specify that it should go through the bastion host, since the WordPress instances can't be accessed from the internet, remember that NAT allows egress only. Also in this block, we specify the `private_key` to use.  
 **SECURITY NOTE: This is for demo purposes, it is a bad idea to store secrets in the terraform state!**
@@ -352,7 +352,7 @@ resource "aws_nat_gateway" "nat-gw" {
   depends_on = ["aws_internet_gateway.app_igw"]
 }
 
-#public access sg 
+#bastion sg 
 resource "aws_security_group" "bastion" {
   name = "bastion-secgroup"
   vpc_id = "${aws_vpc.app_vpc.id}"
@@ -372,12 +372,34 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+#LoadBalancer sg 
+resource "aws_security_group" "alb" {
+  name = "pub-secgroup"
+  vpc_id = "${aws_vpc.app_vpc.id}"
+
+  # ssh access from anywhere
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    protocol = "-1"
+    from_port = 0
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 ```
 **aws_route_table.public-routes:** The route table for the public subnets. It has a default route to the internet via an `aws_internet_gateway` defined previously in [vpc.tf](../../../terraform/modules/aws_wordpress/vpc.tf). Note that we define a `aws_route_table_association` for both public subnets.  
 
 **aws_nat_gateway.nat-gw:** We define the NAT gateway and the `eip` external IP here. This gateway will be used by the private subnets that want to reach internet. To create this we depend on the internet gateway and the dns resolver.
 
-**aws_security_group:** The `aws_security_group.bastion` security group allows TCP port 22 from everywhere. This is for ssh connections from our laptop.
+**aws_security_group:** The `aws_security_group.bastion` security group allows TCP port 22 from everywhere. This is for ssh connections from our laptop. 
+`aws_security_group.alb` allows TCP port 80 connections to the load balancer from everywhere. We want this because this is our entry point to the application.
 
 The bastion host configuration should be familiar by now:
 ```HCL
