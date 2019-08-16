@@ -434,7 +434,8 @@ Again, the `ami` attribute comes from a `data` resource defined in [main.tf](../
 
 Now the load balancer:  
 See [public_tier.tf](../../../terraform/modules/aws_wordpress/public_tier.tf)
-```
+
+```HCL
 resource "aws_alb" "alb" {
   subnets = ["${aws_subnet.pub_subnet_1.id}", "${aws_subnet.pub_subnet_2.id}"]
   internal = false
@@ -482,6 +483,7 @@ resource "aws_alb_listener" "list" {
 **aws_alb_target_group_attachment.attach_web:** This is where we assgin the EC2 instances to the load balancer. The `count` attribute indicates that we will create two resources and the `target_id` specifies the id of the specific EC2 instance. We use the `count.index` value to get the right instance out of the `aws_instance.wp.*.id` array using the `element` function.
 **aws_alb_listener.list:** This specifies the action the `alb` should take. In this case we are saying that every request on port 80 should be forwarded to the target group defined earlier.
 
+---
 With this you can deploy a 3 tier WordPress solution in AWS using terraform =). In the next tutorial we will create a VPN between AWS and GCP and then migrate this solution to GCP using Velostrata.
 
 For a working demo, please go to https://github.com/3wks/aws-gcp-vpn-demo
