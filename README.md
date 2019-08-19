@@ -1,10 +1,10 @@
-# Migrate WordPress from AWS to GCP using velostrata
+# Migrate WordPress from AWS to GCP using Migrate for GCE (Velostrata)
 
-Use terraform to deploy a 3-tier WordPress application in AWS and migrate it to GCP using Velostrata.
+Use terraform to deploy a 3-tier WordPress application in AWS and migrate it to GCP using [Migrate for GCE (Velostrata)](https://cloud.google.com/migrate/compute-engine/docs/4.5/).
 
-This project serves two purposes:
-- A demo to present the working solution.
-- A set of tutorials guiding how to independently set up the diferent parts of this solution.
+Check out this tutorial with the step-by-step guide of each of the parts involved on this demo. (Pending link)
+
+Please look at the [Troubleshooting](docs/TROUBLE_SHOOTING.md) guide if you can't get this working.
 
 ## Demo
 There is some set up needed in both clouds, please read the [PRE-REQUISITES](docs/demo/PRE-REQUISITES.md) doc for more info.  
@@ -22,13 +22,9 @@ There is some set up needed in both clouds, please read the [PRE-REQUISITES](doc
 5. Open wordpress in gcp: `make wp_gcp`
 6. Clean up resources: `make destroy`
 
-## Tutorial
-There are three tutorials that can be followed, each of them builds up on what was developed in the previous one:
+The deployed solution will look like this:
 
-1. [How to deploy a WordPress 3 tier application in AWS](docs/tutorial/TUTORIAL.md)
-2. [How to deploy a high availability VPN between GCP and AWS](docs/tutorial/TUTORIAL.md)
-3. [How to migrate EC2 instances from AWS to GCP using velostrata](docs/tutorial/TUTORIAL.md)
+[INSERT DIAGRAM]()
 
-**Please take a look at the [Security notes](docs/SECURITY_NOTES.md) before trying this for production.**
-
-Also there is a small [Troubleshooting](docs/TROUBLE_SHOOTING.md) guide and some [Acknowledgements](docs/ACKNOWLEDGEMENTS.md)
+---
+These are the [References](docs/ACKNOWLEDGEMENTS.md) on which I based this demo.
