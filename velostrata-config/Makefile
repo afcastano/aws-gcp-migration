@@ -17,25 +17,25 @@ configure: ## Set up source and target clouds. Also creates a runbook ready to s
 		&& envsubst<templates/generate-runbook.json.tpl>out/generate-runbook.json")
 	
 	echo "Creating source cloud credentials"
-	curl -k -s --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X PUT -d "@${DIR}/out/aws-credentials.json" https://$(velostrata_ip)/velostrata/api/v42/cloud/credentials/aws > /dev/null
+	curl -k -s --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X PUT -d "@${DIR}/out/aws-credentials.json" https://$(velostrata_ip)/velostrata/api/v45/cloud/credentials/aws > /dev/null
 	sleep 5
 	
 	echo "Creating source cloud details"
-	curl -k -s --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/aws-cloud-details.json" https://$(velostrata_ip)/velostrata/api/v42/cloud/details > /dev/null
+	curl -k -s --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/aws-cloud-details.json" https://$(velostrata_ip)/velostrata/api/v45/cloud/details > /dev/null
 	sleep 15
 	
 	echo "Creating cloud extensions"
-	$(eval task = $(shell curl -k -s --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/cloud-extensions.json" https://$(velostrata_ip)/velostrata/api/v42/cloudextensions 2>/dev/null | jq -r '.value'))
+	$(eval task = $(shell curl -k -s --user apiuser:wpdemo1234 -H "Content-Type: application/json" -X POST -d "@${DIR}/out/cloud-extensions.json" https://$(velostrata_ip)/velostrata/api/v45/cloudextensions 2>/dev/null | jq -r '.value'))
 	sleep 10
 	echo "Checking task $(task)... this could take up to 5 mins..."
 
-	state="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v42/tasks/$(task)" 2>/dev/null | jq -r '.state')" && \
-	progress="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v42/tasks/$(task)" 2>/dev/null | jq -r '.progress')" && \
+	state="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v45/tasks/$(task)" 2>/dev/null | jq -r '.state')" && \
+	progress="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v45/tasks/$(task)" 2>/dev/null | jq -r '.progress')" && \
 	while [ "$$state" != "Succeeded" ] ; do \
 		echo "Status: \"$$state\"... \"$$progress\"%, retrying in 30 seconds..." ; \
 		sleep 30 ; \
-		state="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v42/tasks/t-2" 2>/dev/null | jq -r '.state')" ; \
-		progress="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v42/tasks/$(task)" 2>/dev/null | jq -r '.progress')" ; \
+		state="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v45/tasks/t-2" 2>/dev/null | jq -r '.state')" ; \
+		progress="$$(curl -k -s --user apiuser:wpdemo1234 "https://$(velostrata_ip)/velostrata/api/v45/tasks/$(task)" 2>/dev/null | jq -r '.progress')" ; \
 	done; 
 	
 	rm -f ${DIR}/out/runbook.csv

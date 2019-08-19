@@ -253,7 +253,7 @@ resource "google_compute_instance" "velostrata-manager" {
 
   boot_disk {
     initialize_params {
-      image = "projects/click-to-deploy-images/global/images/velostrata-mgmt-4-2-0-24912"
+      image = "${var.velostrata_manager_img}"
       size  = 60
     }
   }

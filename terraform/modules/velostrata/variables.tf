@@ -9,6 +9,10 @@ variable "gcp_velos_manager_subnet" {}
 
 variable "gcp_vpc_name" {}
 
+variable "velostrata_manager_img" {
+  default = "projects/click-to-deploy-images/global/images/velostrata-mgmt-4-5-0-26748"
+}
+
 variable "gcp_velostrata_extension_tag" {
   default = "fw-velostrata"
 }
