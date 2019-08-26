@@ -1,6 +1,6 @@
 # Migrate WordPress from AWS to GCP using Migrate for GCE (Velostrata)
 
-Use terraform to deploy a 3-tier WordPress application in AWS and migrate it to GCP using [Migrate for GCE (Velostrata)](https://cloud.google.com/migrate/compute-engine/docs/4.5/).
+Use terraform to deploy a 3-tier WordPress application in AWS and migrate it to GCP using [Migrate for GCE (Velostrata)](https://cloud.google.com/migrate/compute-engine/).
 
 If you are interested in the step by step guide of each of the components of this solution, [check out this article](https://medium.com/@afcastano/deploy-a-3-tier-wordpress-solution-in-aws-using-terraform-f772e0fcaaf3?source=friends_link&sk=d68767810e5bcd0ecaf27388fb7605a7).
 
