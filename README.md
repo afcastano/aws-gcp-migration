@@ -8,13 +8,14 @@ Please look at the [Troubleshooting](docs/TROUBLE_SHOOTING.md) guide if you can'
 
 ## Demo
 There is some set up needed in both clouds, please read the [PRE-REQUISITES](docs/demo/PRE-REQUISITES.md) doc for more info.  
-**Summary:**
-- Install Docker (The only local dependency)
-- AWS: Obtain a key id and secret
-- GCP: Create a json key file and enable some APIs
-- Load keys into environment variables
 
-**Steps:**
+### Summary:
+* Install Docker (The only local dependency)
+* AWS: Obtain a key id and secret
+* GCP: Create a json key file and enable some APIs
+* Load keys into environment variables
+
+### Steps:
 1. Deploy: `make deploy`
 2. Open and configure wordpress in aws: `make wp_aws`
 3. Accept velostrata eula: `make eula`
